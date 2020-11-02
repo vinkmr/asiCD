@@ -57,7 +57,7 @@ def apply_circular_mask(sq_image, radius:int):
         radius ([int]): [radius of the circular mask to applied]
 
     Returns:
-        img1_bg ([np.array]): [Returns a numpy array representing the image with a circular mask crop applied]
+        img1_bg [np.array]: [Returns a numpy array representing the image with a circular mask crop applied]
     """
     r = radius
     img1 = sq_image  # true image
@@ -134,8 +134,9 @@ def _main_(args):
 
 if __name__== "__main__":
     args = argparser.parse_args()
-    
+
     #default arguments
     args.conf = "config.json"
+
     _main_(args)
 # %%
