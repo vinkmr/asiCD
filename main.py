@@ -1,12 +1,16 @@
 # %% Dependencies
-import tensorflow as tf
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2 as cv
 import os
-
+import json
+# import tensorflow as tf
 # import imageio
 # import polarTransform as pt
+
+argparser = argparse.ArgumentParser(description = "Preprocess images from the dataset folder")
+argparser.add_argument("-c", "--config", help="path to configuration file")
 
 # %% Image transformation squareCrop
 def square_crop(imageLoc: str, amount: int):
@@ -53,7 +57,7 @@ def apply_circular_mask(sq_image, radius:int):
         radius ([int]): [radius of the circular mask to applied]
 
     Returns:
-        [np.array]: [Returns a numpy array representing the image with a circular mask crop applied]
+        img1_bg [np.array]: [Returns a numpy array representing the image with a circular mask crop applied]
     """
     r = radius
     img1 = sq_image  # true image
@@ -118,12 +122,21 @@ def apply_circular_mask(sq_image, radius:int):
 # %% Main Block
 
 
-def main():
+def _main_(args):
+    config_path = args.config
+
+    with open(config_path) as config_buffer:
+        config = json.load(config_buffer)
     print("Main method called")
-    img_cropped, radius = square_crop(".\dataset\\20190701045440_11.jpg", 320)
+    img_cropped, radius = square_crop(".\dataset\\20190701045440_11.jpg", config["preprocess"]["crop_px"])
     img_masked = apply_circular_mask(img_cropped, radius)
     cv.imwrite("./dataset/cropped/circularCroppedImage.jpg", img_masked)
 
-main()
+if __name__== "__main__":
+    args = argparser.parse_args()
 
+    #default arguments
+    args.conf = "config.json"
+
+    _main_(args)
 # %%
