@@ -5,11 +5,14 @@ import matplotlib.pyplot as plt
 import cv2 as cv
 import os
 import json
+
 # import tensorflow as tf
 # import imageio
 # import polarTransform as pt
 
-argparser = argparse.ArgumentParser(description = "Preprocess images from the dataset folder")
+argparser = argparse.ArgumentParser(
+    description="Preprocess images from the dataset folder"
+)
 argparser.add_argument("-c", "--config", help="path to configuration file")
 
 # %% Image transformation squareCrop
@@ -49,7 +52,7 @@ def square_crop(imageLoc: str, amount: int):
 # %% Image transformation CircularCrop by applying mask
 
 
-def apply_circular_mask(sq_image, radius:int):
+def apply_circular_mask(sq_image, radius: int):
     """
     [Apply a circular mask to a provided image.]
     Args:
@@ -64,7 +67,7 @@ def apply_circular_mask(sq_image, radius:int):
     # create an arrray of zeros with same shape as true image, i.e. black image of same shape as true image
     img2 = np.zeros_like(sq_image)
 
-    # draw a white circle with radius 'r' == cropping radius, onto 
+    # draw a white circle with radius 'r' == cropping radius, onto
     img2 = cv.circle(img2, (r, r), r, (255, 255, 255), -1)
     rows, cols, channels = img1.shape
     roi = img1[0:rows, 0:cols]
@@ -80,43 +83,8 @@ def apply_circular_mask(sq_image, radius:int):
     # cv.imshow("img1_bg", img1_bg)
     # cv.waitKey(0)
     # cv.destroyAllWindows()
-    
+
     return img1_bg
-
-
-# Center coordinates and radius of circle
-# x = int(1920/2)
-# y = int(1920/2)
-# r = int(1600/2)
-# crpdimgCopy = crpdimg
-    
-# # circular mask of the radius 'r'
-# # pixels outside the circle will be set to black
-# mask = np.zeros_like(crpdimgCopy)
-# cv.imshow('CorrectImage',mask)
-# cv.waitKey(0)
-# cv.destroyAllWindows
-# mask = cv.circle(mask,(r,r),r,(255,255,255),-1)
-
-# ret, mask = cv.threshold(mask, 10, 255, cv.THRESH_BINARY)
-
-# mask_inv = cv.bitwise_not(mask)
-
-# cv.imshow('CorrectImage',mask)
-# cv.waitKey(0)
-# cv.destroyAllWindows
-
-# roi = crpdimg
-
-# img1_bg = cv.bitwise_and(roi,roi,mask = mask_inv)
-# img2_fg = cv.bitwise_and(mask,mask,mask = mask)
-
-# dst = cv.add(img1_bg,img2_fg)
-# crpdimgCopy =dst
-
-# cv.imshow('CorrectImage',crpdimgCopy)
-# cv.waitKey(0)
-# cv.destroyAllWindows
 
 
 # %% Main Block
@@ -128,14 +96,17 @@ def _main_(args):
     with open(config_path) as config_buffer:
         config = json.load(config_buffer)
     print("Main method called")
-    img_cropped, radius = square_crop(".\dataset\\20190701045440_11.jpg", config["preprocess"]["crop_px"])
+    img_cropped, radius = square_crop(
+        ".\dataset\\20190701045440_11.jpg", config["preprocess"]["crop_px"]
+    )
     img_masked = apply_circular_mask(img_cropped, radius)
     cv.imwrite("./dataset/cropped/circularCroppedImage.jpg", img_masked)
 
-if __name__== "__main__":
+
+if __name__ == "__main__":
     args = argparser.parse_args()
 
-    #default arguments
+    # default arguments
     args.conf = "config.json"
 
     _main_(args)
