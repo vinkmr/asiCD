@@ -2,6 +2,6 @@
     "preprocess": {
         "crop_px": 320,
         "dataset_path":".\\dataset\\actual\\",
-        "prep_dataset_path":"\\dataset\\cropped\\"
+        "prep_dataset_path":".\\dataset\\cropped\\"
     } 
 }
