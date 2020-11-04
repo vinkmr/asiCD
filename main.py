@@ -87,27 +87,48 @@ def apply_circular_mask(sq_image, radius: int):
     return img1_bg
 
 
+# %% preprocess block
+def preprocess(datapath: str,output_path:str, crop_depth: int):
+
+    print("Preprocess called.")
+    rootdir = datapath
+    outputdir = output_path
+    crop_depth = crop_depth
+    for subdir, dirs, files in os.walk(rootdir):
+        # for dir in subdir:
+            for file in files:
+                # print("\n")
+                # print(os.path.join(subdir, file))
+                img_cropped, radius = square_crop(os.path.join(subdir, file), crop_depth)
+                img_masked = apply_circular_mask(img_cropped, radius)
+                cv.imwrite((output_path+file[:-4]+"_cropped"+file[-4:]), img_masked)
+                # cv.imwrite((output_path+file[:-4]+dir+"_cropped"+file[-4:]), img_masked)
+    print("\nPreprocessing Done.")
+    return False
+
+
 # %% Main Block
-
-
 def _main_(args):
+    # Load Config
     config_path = args.config
-
     with open(config_path) as config_buffer:
         config = json.load(config_buffer)
+
+    # Test message
     print("Main method called")
-    img_cropped, radius = square_crop(
-        ".\dataset\\20190701045440_11.jpg", config["preprocess"]["crop_px"]
-    )
-    img_masked = apply_circular_mask(img_cropped, radius)
-    cv.imwrite("./dataset/cropped/circularCroppedImage.jpg", img_masked)
+
+    preprocess(config["preprocess"]["dataset_path"],config["preprocess"]["prep_dataset_path"], config["preprocess"]["crop_px"])
+    # img_cropped, radius = square_crop(
+    #     ".\dataset\\20190701045440_11.jpg", config["preprocess"]["crop_px"]
+    # )
+    # img_masked = apply_circular_mask(img_cropped, radius)
+    # cv.imwrite("./dataset/cropped/circularCroppedImage.jpg", img_masked)
 
 
 if __name__ == "__main__":
     args = argparser.parse_args()
 
     # default arguments
-    args.conf = "config.json"
+    args.config = "config.json"
 
     _main_(args)
-# %%
