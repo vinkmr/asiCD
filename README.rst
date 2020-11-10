@@ -3,8 +3,8 @@ Local Cloud Detection using All Sky Images
 - Using .rst so that python package detects README
 - https://en.wikipedia.org/wiki/ReStructuredText
 
-/* Under Construction */
-------------------------
+<Under Construction>
+--------------------
 
 
 Sample Syntax
