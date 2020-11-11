@@ -1,12 +1,18 @@
 from pathlib import Path
-from utilities import read_json, get_dataset_dict
+from utilities import read_json, get_dataset_dict, check_dataset
 
 
-config = read_json("config.json")
-dataset_path = Path.cwd().parent / config["dataset_path"]
+def main():
+    config = read_json("config.json")
+    dataset_path = Path(config["dataset_path"])
+
+    dataset_dict = get_dataset_dict(dataset_path)
+
+    try:
+        check_dataset(dataset_dict)
+    finally:
+        return None
 
 
-dataset_dict = get_dataset_dict(dataset_path)
-print("train size:\t", len(dataset_dict["train"][0]))
-print("test size:\t", len(dataset_dict["test"][0]))
-print("valid size:\t", len(dataset_dict["val"][0]))
+if __name__ == "__main__":
+    main()
