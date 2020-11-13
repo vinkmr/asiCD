@@ -1,3 +1,6 @@
 {
-    "dataset_path": "dataset/swimseg-2"
+    "dataset_path": "dataset/swimseg-2",
+    "model":{
+        
+    }
 }
