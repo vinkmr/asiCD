@@ -1,7 +1,7 @@
-from os import name, pipe
-from pathlib import Path
+# from pathlib import Path
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import json
-from operator import methodcaller
+# from operator import methodcaller
 
 
 def read_json(json_path):
@@ -58,6 +58,27 @@ def check_dataset(dataset_dict):
         # Not sure if working
         print("Dataset is consistent (by count and filename)")
     else:
-        print("Dataset is consistent by count but inconsistant by filename")
+        print("Dataset is consistent by count, but inconsistant by filename")
 
     return True
+
+
+def get_img_mask_generators(dataset_path, SEED=1):
+    """
+    docstring
+    """
+    print(f"From {dataset_path}")
+    image_datagen = ImageDataGenerator()
+    mask_datagen = ImageDataGenerator()
+
+    image_generator = image_datagen.flow_from_directory(dataset_path,
+                                                        class_mode=None,
+                                                        seed=SEED)
+    mask_generator = mask_datagen.flow_from_directory(dataset_path,
+                                                      class_mode=None,
+                                                      seed=SEED)
+
+    # combine generators into one which yields image and masks
+    train_generator = zip(image_generator, mask_generator)
+
+    return train_generator

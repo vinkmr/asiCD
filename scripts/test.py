@@ -5,7 +5,6 @@ from utilities import read_json, get_dataset_dict, check_dataset
 def main():
     config = read_json("config.json")
     dataset_path = Path(config["dataset_path"])
-
     dataset_dict = get_dataset_dict(dataset_path)
 
     try:
