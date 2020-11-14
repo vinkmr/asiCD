@@ -1,4 +1,5 @@
 # from pathlib import Path
+from datetime import datetime
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import json
 # from operator import methodcaller
@@ -82,3 +83,11 @@ def get_img_mask_generators(dataset_path, SEED=1):
     train_generator = zip(image_generator, mask_generator)
 
     return train_generator
+
+
+def get_timestamp():
+    now_d = datetime.now().date()
+    now_t = datetime.now().time()
+    timestamp = f"{now_d}-{now_t.hour}-{now_t.minute}"
+    # timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
+    return timestamp

@@ -3,3 +3,4 @@
 dataset/
 .pytest_cache/
 calibration/
+outputs/
