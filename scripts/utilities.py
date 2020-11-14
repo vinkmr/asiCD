@@ -1,4 +1,5 @@
 # from pathlib import Path
+import numpy as np
 from datetime import datetime
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import json
@@ -91,3 +92,9 @@ def get_timestamp():
     timestamp = f"{now_d}-{now_t.hour}-{now_t.minute}"
     # timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
     return timestamp
+
+
+def load_npy(npy_file):
+    npy_arr = np.load(npy_file)
+
+    return npy_arr
