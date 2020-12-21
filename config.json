@@ -3,5 +3,9 @@
         "crop_px": 320,
         "dataset_path":".\\dataset\\actual\\",
         "prep_dataset_path":".\\dataset\\cropped\\"
-    } 
+    } ,
+    "dataset_path": "dataset/swimseg-2",
+    "model":{
+        
+    }
 }
