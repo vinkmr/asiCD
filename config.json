@@ -2,5 +2,8 @@
     "dataset_path": "dataset/swimseg-2",
     "model":{
         
+    },
+    "aug_config": {
+        "target_size": [128, 128]
     }
 }

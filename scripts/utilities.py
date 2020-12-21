@@ -1,7 +1,8 @@
-# from pathlib import Path
+import numpy as np
 from datetime import datetime
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import json
+from pathlib import Path
 # from operator import methodcaller
 
 
@@ -64,18 +65,22 @@ def check_dataset(dataset_dict):
     return True
 
 
-def get_img_mask_generators(dataset_path, SEED=1):
+def get_img_mask_generators(dataset_path, aug_config, SEED=1):
     """
     docstring
     """
     print(f"From {dataset_path}")
-    image_datagen = ImageDataGenerator()
-    mask_datagen = ImageDataGenerator()
+    image_datagen = ImageDataGenerator(rescale=1./255)
+    mask_datagen = ImageDataGenerator(rescale=1./255)
 
     image_generator = image_datagen.flow_from_directory(dataset_path,
+                                                        target_size=aug_config["target_size"],
+                                                        color_mode="rgb",
                                                         class_mode=None,
                                                         seed=SEED)
-    mask_generator = mask_datagen.flow_from_directory(dataset_path,
+    mask_generator = mask_datagen.flow_from_directory(dataset_path + "_labels",
+                                                      target_size=aug_config["target_size"],
+                                                      color_mode="grayscale",
                                                       class_mode=None,
                                                       seed=SEED)
 
@@ -91,3 +96,54 @@ def get_timestamp():
     timestamp = f"{now_d}-{now_t.hour}-{now_t.minute}"
     # timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
     return timestamp
+
+
+def load_npy(npy_file):
+    npy_arr = np.load(npy_file)
+
+    return npy_arr
+
+
+def create_output_dir():
+    """Create an output directory in the current working directory
+    """
+    output_dir = Path("output")
+
+    if output_dir.is_dir():
+        print("output folder exists")
+    else:
+        print("output folder created")
+        output_dir.mkdir()
+
+    return None
+
+
+def create_dataset_dir(output_dir):
+    """Create train, test and  validation directories
+    """
+    timestamp = get_timestamp()
+    folder_split = f"{output_dir}/{timestamp}"
+    Path(folder_split).mkdir()
+
+    # Test
+    Path(f"{folder_split}/test").mkdir()
+    Path(f"{folder_split}/test/img").mkdir()
+
+    Path(f"{folder_split}/test_labels").mkdir()
+    Path(f"{folder_split}/test_labels/img").mkdir()
+
+    # Train
+    Path(f"{folder_split}/train").mkdir()
+    Path(f"{folder_split}/train/img").mkdir()
+
+    Path(f"{folder_split}/train_labels").mkdir()
+    Path(f"{folder_split}/train_labels/img").mkdir()
+
+    # Train
+    Path(f"{folder_split}/val").mkdir()
+    Path(f"{folder_split}/val/img").mkdir()
+
+    Path(f"{folder_split}/val_labels").mkdir()
+    Path(f"{folder_split}/val_labels/img").mkdir()
+
+    return f"{output_dir}/{timestamp}"
