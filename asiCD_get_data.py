@@ -41,16 +41,20 @@ class GetImagesPls:
         return folders
 
     def filter_by_month(self):
-        """To filter the directories based on months
-
+        """
         Args:
-            date_list ([type]): [description]
-            start_month (int, optional): [description]. Defaults to 1.
-            end_month (int, optional): [description]. Defaults to 12.
+            date_list (str): List containing name of all folders.
+            Folders correspond to specific date
+            start_month (int, optional): Should be an integer between 1 and 12.
+            Defaults to 1.
+            end_month (int, optional): Should be an integer between 1 and 12.
+            Defaults to 12.
 
         Returns:
-            [type]: [description]
+            str: Returns a filtered list containing only entries within the 
+            range start_month till end_month
         """
+
         date_list = GetImagesPls.fetch_folders(self.ftp_obj)
 
         if self.start_month not in range(1, 12, 1):
