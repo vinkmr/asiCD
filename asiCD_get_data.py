@@ -1,9 +1,11 @@
 import ftplib
 from tqdm import trange
+from tqdm import tqdm
 
 
 class GetImagesPls:
-    def __init__(self, ftp_host, ftp_username, ftp_passwd, working_dir,
+    def __init__(self, ftp_host, ftp_username, ftp_passwd,
+                 working_dir, local_output_path,
                  start_month=1, end_month=12,
                  start_hr=0, end_hr=23):
 
@@ -16,6 +18,7 @@ class GetImagesPls:
         self.end_month = end_month
         self.start_hr = start_hr
         self.end_hr = end_hr
+        self.local_output_path = local_output_path
 
         self.ftp_obj = self.ftp_make_connection()
 
@@ -51,7 +54,7 @@ class GetImagesPls:
             Defaults to 12.
 
         Returns:
-            str: Returns a filtered list containing only entries within the 
+            str: Returns a filtered list containing only entries within the
             range start_month till end_month
         """
 
@@ -98,7 +101,7 @@ class GetImagesPls:
             return False
 
     def fetch_file_names(self):
-        all_files = []
+        all_file_paths = []
 
         for i in trange(len(self.filtered_date_list), desc="Days"):
             folder = self.filtered_date_list[i]
@@ -114,73 +117,66 @@ class GetImagesPls:
                     # Add time filter here
                     if date_flag:
 
-                        all_files.append(self.working_dir + "/" +
-                                         folder + "/" + file)
+                        all_file_paths.append(self.working_dir + "/" +
+                                              folder + "/" + file)
+                        # all_files.append(folder + "/" + file)
 
-        self.all_files = all_files
+        self.all_file_paths = all_file_paths
         return None
+
+    def download_files(self):
+
+        for file_path in tqdm(self.all_file_paths):
+
+            file_dir = "/".join(file_path.split("/")[:-1])
+            file_name = file_path.split("/")[-1]
+
+            # Changing to file directory
+            self.ftp_obj.cwd(file_dir)
+
+            # Downloading the file
+            local_file = open(self.local_output_path + "/" + file_name, 'wb')
+            self.ftp_obj.retrbinary('RETR ' + file_name, local_file.write)
+            local_file.close()
 
     def logging_1(self):
         print(self.filtered_date_list)
 
     def logging_2(self):
-        print(self.all_files)
+        print(self.all_file_paths)
 
-    def logging_3(self):
-        print(f"Num Images: {len(self.all_files) * 350 / 1000000:.2f} GB")
+    def logging_3(self, img_size_kb=350):
+        print(
+            f"Dataset GB: {len(self.all_file_paths) * img_size_kb / 10e6:.2f}")
 
 
 def main():
-    # ftp_host = "ftp.schreder-cms.com"
-    # ftp = ftplib.FTP()
-    # # Make Connection
-    # ftp.connect(ftp_host)
-    # ftp.login(user='20318_01', passwd='I5Ayut5c')
-    # print("Connection established...")
-
-    # # Setting working directory
-    # ftp.cwd(working_dir)
 
     ftp_host = "ftp.schreder-cms.com"
     ftp_username = '20318_01'
     ftp_passwd = 'I5Ayut5c'
     working_dir = "/asi16_data/asi_16030"
+    output_path = "dataset/asi"
 
     # Creting getimgobj
     some_obj = GetImagesPls(ftp_host,
                             ftp_username,
                             ftp_passwd,
                             working_dir,
+                            output_path,
                             start_month=7,
                             end_month=7,
                             start_hr=12,
-                            end_hr=14)
+                            end_hr=12)
 
     some_obj.filter_by_month()
-    some_obj.logging_1()
+    # some_obj.logging_1()
 
     some_obj.fetch_file_names()
-    some_obj.logging_2()
+    # some_obj.logging_2()
     some_obj.logging_3()
 
-    # # Filtering by months
-    # folders = filter_by_month(folders, start_month=5, end_month=8)
-
-    # # Fetching all file paths
-    # all_files = fetch_file_names(working_dir, folders, ftp)
-
-    # print(len(all_files))
-    # print(all_files[0:3])
-
-    # ftp.cwd("/asi16_data/asi_16030/")
-
-    # # fetch files
-    # files = ftp.nlst()
-
-    # for file in files:
-
-    # handle = open(files[0], "wb")
-    # ftp.retrbinary('RETR ' + files[0], handle.write)
+    some_obj.download_files()
 
 
 if __name__ == "__main__":
