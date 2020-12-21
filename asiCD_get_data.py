@@ -5,12 +5,12 @@ def filter_by_month(date_list, start_month=1, end_month=12):
     """To filter the directories based on months
 
     Args:
-        date_list ([type]): [description]
-        start_month (int, optional): [description]. Defaults to 1.
-        end_month (int, optional): [description]. Defaults to 12.
+        date_list ([list:str]): [List containing name of all folders. Folders correspond to specific date]
+        start_month (int, optional): [Should be an integer between 1 and 12]. Defaults to 1.
+        end_month (int, optional): [Should be an integer between 1 and 12]. Defaults to 12.
 
     Returns:
-        [type]: [description]
+        [list:str]: [Returns a filtered list containing only entries within the range start_month till end_month]
     """
 
     if start_month not in range(1, 12, 1):
