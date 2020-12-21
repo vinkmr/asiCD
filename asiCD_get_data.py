@@ -4,6 +4,7 @@ from tqdm import tqdm
 
 
 class GetImagesPls:
+
     def __init__(self, ftp_host, ftp_username, ftp_passwd,
                  working_dir, local_output_path,
                  start_month=1, end_month=12,
@@ -82,6 +83,7 @@ class GetImagesPls:
 
     @staticmethod
     def filter_by_time(file_name, start_hr, end_hr):
+
         # time in hours from 00 to 24
 
         if start_hr not in range(0, 23, 1):
@@ -114,6 +116,7 @@ class GetImagesPls:
                     date_flag = GetImagesPls.filter_by_time(file,
                                                             self.start_hr,
                                                             self.end_hr)
+                    # freq_flag => randomly samle on a per hour basis
                     # Add time filter here
                     if date_flag:
 
@@ -140,6 +143,8 @@ class GetImagesPls:
             local_file.close()
 
     def logging_1(self):
+        """Logging for filtered folder list
+        """
         print(self.filtered_date_list)
 
     def logging_2(self):
@@ -153,8 +158,8 @@ class GetImagesPls:
 def main():
 
     ftp_host = "ftp.schreder-cms.com"
-    ftp_username = '20318_01'
-    ftp_passwd = 'I5Ayut5c'
+    ftp_username = "20318_01"
+    ftp_passwd = "I5Ayut5c"
     working_dir = "/asi16_data/asi_16030"
     output_path = "dataset/asi"
 
