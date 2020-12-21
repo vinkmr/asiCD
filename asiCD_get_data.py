@@ -1,19 +1,62 @@
 import ftplib
 
-ftp_host = "ftp.schreder-cms.com"
 
-ftp = ftplib.FTP()
+def filter_by_month(date_list, start_month=1, end_month=12):
+    """To filter the directories based on months
 
-ftp.connect(ftp_host)
+    Args:
+        date_list ([type]): [description]
+        start_month (int, optional): [description]. Defaults to 1.
+        end_month (int, optional): [description]. Defaults to 12.
 
-ftp.login(user='20318_01',passwd='I5Ayut5c' )
+    Returns:
+        [type]: [description]
+    """
 
-ftp.cwd("/asi16_data/asi_16030/20190703/")
+    if start_month not in range(1, 12, 1):
+        print(f"Invalid start_month: {start_month}, using defaults")
+        start_month = 1
 
-files = ftp.nlst()
+    if end_month not in range(1, 12, 1):
+        print(f"Invalid end_month: {end_month}, using defaults")
+        end_month = 12
 
-print(files)
+    filterd_date_list = []
 
-handle = open(files[0],"wb")
-# for file in files:
-ftp.retrbinary('RETR ' + files[0], handle.write)
+    for date in date_list:
+        month = date[4:6]
+
+        if int(month) >= start_month and int(month) <= end_month:
+            filterd_date_list.append(date)
+
+    return filterd_date_list
+
+
+def main():
+    ftp_host = "ftp.schreder-cms.com"
+    ftp = ftplib.FTP()
+
+    # Make Connection
+    ftp.connect(ftp_host)
+    ftp.login(user='20318_01', passwd='I5Ayut5c')
+
+    # fetch folders
+    ftp.cwd("/asi16_data/asi_16030/")
+    folders = ftp.nlst()
+    folders = filter_by_month(folders, start_month=5, end_month=8)
+    # print(folders)
+
+    # #
+    # ftp.cwd("/asi16_data/asi_16030/")
+
+    # # fetch files
+    # files = ftp.nlst()
+
+    # for file in files:
+
+    # handle = open(files[0], "wb")
+    # ftp.retrbinary('RETR ' + files[0], handle.write)
+
+
+if __name__ == "__main__":
+    main()
