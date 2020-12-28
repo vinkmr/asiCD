@@ -4,3 +4,5 @@ dataset/
 .pytest_cache/
 calibration/
 outputs/
+credentials.json
+asiCD/

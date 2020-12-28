@@ -1,6 +1,10 @@
 import ftplib
+from json import load
 from tqdm import trange
 from tqdm import tqdm
+
+# Local Modules
+from asiCD_utils import load_json
 
 
 class GetImagesPls:
@@ -157,9 +161,12 @@ class GetImagesPls:
 
 def main():
 
-    ftp_host = "ftp.schreder-cms.com"
-    ftp_username = "20318_01"
-    ftp_passwd = "I5Ayut5c"
+    credentials = load_json("credentials.json")
+
+    ftp_host = credentials["ftp_host"]
+    ftp_username = credentials["ftp_username"]
+    ftp_passwd = credentials["ftp_passwd"]
+    
     working_dir = "/asi16_data/asi_16030"
     output_path = "dataset/asi"
 
