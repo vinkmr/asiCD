@@ -1,28 +1,30 @@
 import ftplib
 from tqdm import trange
 from tqdm import tqdm
-
+from pprint import pprint
 # Local Modules
-from asiCD_utils import load_json
+from asiCD.asiCD_utils import load_json
 
 
 class GetImagesPls:
 
     def __init__(self, ftp_host, ftp_username, ftp_passwd,
-                 working_dir, local_output_path,
+                 ftp_working_dir, local_output_path,
                  start_month=1, end_month=12,
-                 start_hr=0, end_hr=23):
+                 start_hr=0, end_hr=23,
+                 sampling_rate=10):
 
         self.ftp_host = ftp_host
         self.ftp_username = ftp_username
         self.ftp_passwd = ftp_passwd
-        self.working_dir = working_dir
+        self.ftp_working_dir = ftp_working_dir
+        self.local_output_path = local_output_path
 
         self.start_month = start_month
         self.end_month = end_month
         self.start_hr = start_hr
         self.end_hr = end_hr
-        self.local_output_path = local_output_path
+        self.sampling_rate = sampling_rate
 
         self.ftp_obj = self.ftp_make_connection()
 
@@ -36,7 +38,7 @@ class GetImagesPls:
         print("Connection established...")
 
         # Setting working directory
-        ftp_obj.cwd(self.working_dir)
+        ftp_obj.cwd(self.ftp_working_dir)
 
         return ftp_obj
 
@@ -110,7 +112,7 @@ class GetImagesPls:
 
         for i in trange(len(self.filtered_date_list), desc="Days"):
             folder = self.filtered_date_list[i]
-            self.ftp_obj.cwd(self.working_dir + "/" + folder)
+            self.ftp_obj.cwd(self.ftp_working_dir + "/" + folder)
             files = self.ftp_obj.nlst()
 
             for j in trange(len(files), desc="Snaps"):
@@ -123,16 +125,34 @@ class GetImagesPls:
                     # Add time filter here
                     if date_flag:
 
-                        all_file_paths.append(self.working_dir + "/" +
+                        all_file_paths.append(self.ftp_working_dir + "/" +
                                               folder + "/" + file)
                         # all_files.append(folder + "/" + file)
 
         self.all_file_paths = all_file_paths
         return None
 
+    def sampling_per_hour(self):
+        """
+        docstring
+        """
+        sampled_file_paths = []
+        all_file_paths = self.all_file_paths
+        # hours = self.end_hr - self.start_hr
+
+        count = 0
+        for _ in range(int(len(self.all_file_paths)/(self.sampling_rate))-1):
+            sampled_file_paths.append(all_file_paths[count+self.sampling_rate])
+            count = count + self.sampling_rate
+
+        return sampled_file_paths
+
     def download_files(self):
 
-        for file_path in tqdm(self.all_file_paths):
+        sampled_file_paths = self.sampling_per_hour()
+        # sampled_file_paths = self.all_file_paths
+
+        for file_path in tqdm(sampled_file_paths):
 
             file_dir = "/".join(file_path.split("/")[:-1])
             file_name = file_path.split("/")[-1]
@@ -151,11 +171,18 @@ class GetImagesPls:
         print(self.filtered_date_list)
 
     def logging_2(self):
-        print(self.all_file_paths)
+        pprint(self.all_file_paths[:10])
 
-    def logging_3(self, img_size_kb=350):
-        print(
-            f"Dataset GB: {len(self.all_file_paths) * img_size_kb / 10e6:.2f}")
+    def logging_3(self):
+        pprint(self.sampling_per_hour()[:10])
+
+    def logging_4(self, img_size_kb=180):
+
+        d_size_original = (len(self.all_file_paths) * img_size_kb) / 1000000
+        d_size_sample = d_size_original / self.sampling_rate
+
+        print(f"Original Size: {d_size_original:.2f} GB")
+        print(f"Sample Size: {d_size_sample:.2f} GB")
 
 
 def main():
@@ -166,26 +193,30 @@ def main():
     ftp_username = credentials["ftp_username"]
     ftp_passwd = credentials["ftp_passwd"]
 
-    working_dir = "/asi16_data/asi_16030"
-    output_path = "dataset/asi"
+    ftp_working_dir = "/asi16_data/asi_16030"
+    local_output_path = "dataset/asi"
 
     # Creting getimgobj
     some_obj = GetImagesPls(ftp_host,
                             ftp_username,
                             ftp_passwd,
-                            working_dir,
-                            output_path,
+                            ftp_working_dir,
+                            local_output_path,
                             start_month=7,
                             end_month=7,
                             start_hr=12,
-                            end_hr=12)
+                            end_hr=12,
+                            sampling_rate=20)
 
     some_obj.filter_by_month()
     # some_obj.logging_1()
 
     some_obj.fetch_file_names()
+
     # some_obj.logging_2()
-    some_obj.logging_3()
+    # some_obj.logging_3()
+
+    some_obj.logging_4()
 
     some_obj.download_files()
 

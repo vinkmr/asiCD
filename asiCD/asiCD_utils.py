@@ -1,4 +1,4 @@
-from json import json_load
+from json import load as json_load
 
 
 def load_json(json_file):

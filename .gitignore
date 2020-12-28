@@ -10,7 +10,6 @@
 dataset/
 calibration/
 outputs/
-asiCD/
 
 # Files
 credentials.json
