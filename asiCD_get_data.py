@@ -1,5 +1,4 @@
 import ftplib
-from json import load
 from tqdm import trange
 from tqdm import tqdm
 
@@ -166,7 +165,7 @@ def main():
     ftp_host = credentials["ftp_host"]
     ftp_username = credentials["ftp_username"]
     ftp_passwd = credentials["ftp_passwd"]
-    
+
     working_dir = "/asi16_data/asi_16030"
     output_path = "dataset/asi"
 
