@@ -1,11 +1,11 @@
 Local Cloud Detection using All Sky Images
 ==========================================
+
 - Using .rst so that python package detects README
-- https://en.wikipedia.org/wiki/ReStructuredText
+- <https://en.wikipedia.org/wiki/ReStructuredText>
 
 <Under Construction>
 --------------------
-
 
 Sample Syntax
 -------------
@@ -27,7 +27,7 @@ Sample Syntax
 
    a) Sub item that goes on at length and thus needs
       to be wrapped. Note the indentation that must
-      match the beginning of the text, not the 
+      match the beginning of the text, not the
       enumerator.
 
       i) List items can even include
@@ -36,6 +36,6 @@ Sample Syntax
 
 3) Third item
 
-#) Another enumerated list item
+# ) Another enumerated list item
 
-#) Second item
+# ) Second item
