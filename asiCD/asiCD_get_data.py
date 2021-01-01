@@ -181,8 +181,6 @@ class GetImagesPls:
         """
         Downloads files from the ftp server after applying filters based on month, time and sampling rate.
         """
-        # sampled_file_paths = self.sampling_per_hour()
-        # sampled_file_paths = self.all_file_paths
         self.fetch_folders()
         self.filter_by_month()
         self.fetch_file_names()
@@ -261,25 +259,10 @@ def main():
         end_hr=12,
         sampling_rate=20,
         logs=1,
-    )  # ftp_make_connection method is called and connection is established and the cwd is changed to ftp_working_dir
-
-    # folders = some_obj.fetch_folders()
-
-    # folders_filtered_by_month = some_obj.filter_by_month(
-    #     folders,
-    # )
-
-    # files_path_list = some_obj.fetch_file_names(folders_filtered_by_month)
-
-    # files_filtered_by_time = some_obj.filter_by_time(files_path_list)
+    )
+    # ftp_make_connection method is called and connection is established and the cwd is changed to ftp_working_dir
 
     some_obj.download_files()
-
-    # for debugging
-    # some_obj.logging_1()
-    # some_obj.logging_2()
-    # some_obj.logging_3()
-    some_obj.logging_4()
 
 
 if __name__ == "__main__":
