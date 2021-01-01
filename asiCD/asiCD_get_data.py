@@ -26,7 +26,7 @@ class GetImagesPls:
         start_hr=0,
         end_hr=23,
         sampling_rate=10,
-        logs=4,
+        log_level=4,
     ):
 
         self.ftp_host = ftp_host
@@ -40,7 +40,7 @@ class GetImagesPls:
         self.start_hr = start_hr
         self.end_hr = end_hr
         self.sampling_rate = sampling_rate
-        self.logs = logs
+        self.log_level = log_level
 
         self.ftp_obj = self.ftp_make_connection()
 
@@ -200,14 +200,14 @@ class GetImagesPls:
             self.ftp_obj.retrbinary("RETR " + file_name, local_file.write)
             local_file.close()
 
-    def logs(self):
-        logs = self.logs
+    def log_level(self):
         logs = {
             1: self.logging_1(),
             2: self.logging_2(),
             3: self.logging_3(),
             4: self.logging_4(),
         }
+        logs.get(self.log_level)
 
     def logging_1(self):
         """Logging for filtered folder list"""
@@ -258,7 +258,7 @@ def main():
         start_hr=12,
         end_hr=12,
         sampling_rate=20,
-        logs=1,
+        log_level=1,
     )
     # ftp_make_connection method is called and connection is established and the cwd is changed to ftp_working_dir
 
