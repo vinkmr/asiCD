@@ -184,7 +184,6 @@ class GetImagesPls:
         self.fetch_folders()
         self.filter_by_month()
         self.fetch_file_names()
-        self.filter_by_time()
         self.sampling_per_hour()
 
         for file_path in tqdm(self.sampled_file_paths):
