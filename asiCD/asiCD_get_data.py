@@ -3,6 +3,7 @@ from tqdm import trange
 from tqdm import tqdm
 from pprint import pprint
 
+
 # Local Modules
 from asiCD.asiCD_utils import load_json
 
@@ -79,7 +80,6 @@ class asiParser:
     def filter_by_time(file_name, start_hr, end_hr):
 
         # time in hours from 00 to 24
-
         if start_hr not in range(0, 23, 1):
             print(f"Invalid start_month: {start_hr}, using defaults")
             start_hr = 0
@@ -98,7 +98,7 @@ class asiParser:
 
     @staticmethod
     def sampling_per_hour(all_file_paths, sampling_rate):
-
+        # TODO change rate to mean samples per hour
         sampled_file_paths = []
         count = 0
         for _ in range(int(len(all_file_paths)/(sampling_rate))-1):
@@ -113,7 +113,7 @@ class asiParser:
         folder_all = asiParser.fetch_folders(self.ftp_obj)
         folder_fil_m = asiParser.filter_by_month(folder_all, start_m, end_m)
 
-        # Loagging
+        # Logging
         if self.run_mode == "DEBUG":
             asiParser.log_folder_names(folder_all,
                                        tag="All folder available", limit=20)
@@ -139,12 +139,11 @@ class asiParser:
                         files_fil_mt.append(self.ftp_working_dir + "/" +
                                             folder + "/" + file)
 
-        if self.run_mode == "DEBUG":
-            asiParser.log_dataset_size(num_files=len(files_fil_mt),
-                                       sampling_rate=s_rate)
+        asiParser.log_dataset_size(num_files=len(files_fil_mt),
+                                   sampling_rate=s_rate)
 
         # Apply Sampling filter
-        if s_rate > 1:
+        if s_rate >= 1:
             files_fil_mts = asiParser.sampling_per_hour(files_fil_mt,
                                                         s_rate)
         else:
@@ -152,12 +151,12 @@ class asiParser:
 
         return files_fil_mts
 
-    def download_files(self, start_month, end_month, start_hr, end_hr, s_rate):
+    def download_files(self, start_m, end_m, start_hr, end_hr, s_rate):
 
-        sampled_file_paths = self.get_filtered_files(start_m=start_month,
-                                                     end_m=end_month,
-                                                     start_h=start_hr,
-                                                     end_h=end_hr,
+        sampled_file_paths = self.get_filtered_files(start_m=start_m,
+                                                     end_m=end_m,
+                                                     start_hr=start_hr,
+                                                     end_hr=end_hr,
                                                      s_rate=s_rate)
 
         for file_path in tqdm(sampled_file_paths):
@@ -173,6 +172,9 @@ class asiParser:
             self.ftp_obj.retrbinary('RETR ' + file_name, local_file.write)
             local_file.close()
 
+        return True
+
+    # Logging Fucntions
     @staticmethod
     def log_folder_names(folder_list, tag, limit=0):
         """Logging folder list
@@ -182,7 +184,7 @@ class asiParser:
 
     @staticmethod
     def log_dataset_size(num_files, sampling_rate, img_size_kb=180):
-
+        # TODO use ftp.size to get dataset size
         d_size_original = (num_files * img_size_kb) / 1000000
         d_size_sample = abs(d_size_original / sampling_rate)
 
@@ -209,15 +211,18 @@ def main():
                          local_output_path,
                          run_mode="RUN")
 
-    sample_dates = some_obj.get_filtered_files(start_m=7,
-                                               end_m=7,
-                                               start_hr=12,
-                                               end_hr=12,
-                                               s_rate=20)
+    # sample_dates = some_obj.get_filtered_files(start_m=7,
+    #                                            end_m=7,
+    #                                            start_hr=12,
+    #                                            end_hr=12,
+    #                                            s_rate=20)
+    # pprint(sample_dates[0:10])
 
-    pprint(sample_dates[0:10])
-
-    # some_obj.download_files()
+    some_obj.download_files(start_m=7,
+                            end_m=8,
+                            start_hr=10,
+                            end_hr=16,
+                            s_rate=180)
 
 
 if __name__ == "__main__":
