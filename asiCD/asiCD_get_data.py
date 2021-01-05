@@ -2,29 +2,22 @@ import ftplib
 from tqdm import trange
 from tqdm import tqdm
 from pprint import pprint
+
 # Local Modules
 from asiCD.asiCD_utils import load_json
 
 
-class GetImagesPls:
+class asiParser:
 
-    def __init__(self, ftp_host, ftp_username, ftp_passwd,
-                 ftp_working_dir, local_output_path,
-                 start_month=1, end_month=12,
-                 start_hr=0, end_hr=23,
-                 sampling_rate=10):
+    def __init__(self, ftp_host, ftp_username, ftp_passwd, ftp_working_dir,
+                 local_output_path, run_mode="DEBUG"):
 
         self.ftp_host = ftp_host
         self.ftp_username = ftp_username
         self.ftp_passwd = ftp_passwd
         self.ftp_working_dir = ftp_working_dir
         self.local_output_path = local_output_path
-
-        self.start_month = start_month
-        self.end_month = end_month
-        self.start_hr = start_hr
-        self.end_hr = end_hr
-        self.sampling_rate = sampling_rate
+        self.run_mode = run_mode
 
         self.ftp_obj = self.ftp_make_connection()
 
@@ -45,11 +38,11 @@ class GetImagesPls:
     @staticmethod
     def fetch_folders(ftp_obj):
         # Fetching folders
-        print("Fetching folders...")
         folders = ftp_obj.nlst()
         return folders
 
-    def filter_by_month(self):
+    @staticmethod
+    def filter_by_month(date_list, start_month, end_month):
         """
         Args:
             date_list (str): List containing name of all folders.
@@ -64,27 +57,23 @@ class GetImagesPls:
             range start_month till end_month
         """
 
-        date_list = GetImagesPls.fetch_folders(self.ftp_obj)
+        if start_month not in range(1, 12, 1):
+            print(f"Invalid start_month: {start_month}, using defaults")
+            start_month = 1
 
-        if self.start_month not in range(1, 12, 1):
-            print(f"Invalid start_month: {self.start_month}, using defaults")
-            self.start_month = 1
-
-        if self.end_month not in range(1, 12, 1):
-            print(f"Invalid end_month: {self.end_month}, using defaults")
-            self.end_month = 12
+        if end_month not in range(1, 12, 1):
+            print(f"Invalid end_month: {end_month}, using defaults")
+            end_month = 12
 
         filtered_date_list = []
 
         for date in date_list:
             month = int(date[4:6])
 
-            if month >= self.start_month and month <= self.end_month:
+            if month >= start_month and month <= end_month:
                 filtered_date_list.append(date)
 
-        self.filtered_date_list = filtered_date_list
-
-        return None
+        return filtered_date_list
 
     @staticmethod
     def filter_by_time(file_name, start_hr, end_hr):
@@ -107,50 +96,69 @@ class GetImagesPls:
         else:
             return False
 
-    def fetch_file_names(self):
-        all_file_paths = []
+    @staticmethod
+    def sampling_per_hour(all_file_paths, sampling_rate):
 
-        for i in trange(len(self.filtered_date_list), desc="Days"):
-            folder = self.filtered_date_list[i]
-            self.ftp_obj.cwd(self.ftp_working_dir + "/" + folder)
-            files = self.ftp_obj.nlst()
-
-            for j in trange(len(files), desc="Snaps"):
-                file = files[j]
-                if file.split(".")[-1] == "jpg":
-                    date_flag = GetImagesPls.filter_by_time(file,
-                                                            self.start_hr,
-                                                            self.end_hr)
-                    # freq_flag => randomly samle on a per hour basis
-                    # Add time filter here
-                    if date_flag:
-
-                        all_file_paths.append(self.ftp_working_dir + "/" +
-                                              folder + "/" + file)
-                        # all_files.append(folder + "/" + file)
-
-        self.all_file_paths = all_file_paths
-        return None
-
-    def sampling_per_hour(self):
-        """
-        docstring
-        """
         sampled_file_paths = []
-        all_file_paths = self.all_file_paths
-        # hours = self.end_hr - self.start_hr
-
         count = 0
-        for _ in range(int(len(self.all_file_paths)/(self.sampling_rate))-1):
-            sampled_file_paths.append(all_file_paths[count+self.sampling_rate])
-            count = count + self.sampling_rate
+        for _ in range(int(len(all_file_paths)/(sampling_rate))-1):
+            sampled_file_paths.append(all_file_paths[count + sampling_rate])
+            count = count + sampling_rate
 
         return sampled_file_paths
 
-    def download_files(self):
+    def get_filtered_files(self, start_m, end_m, start_hr, end_hr, s_rate=-1):
 
-        sampled_file_paths = self.sampling_per_hour()
-        # sampled_file_paths = self.all_file_paths
+        # Apply month filter
+        folder_all = asiParser.fetch_folders(self.ftp_obj)
+        folder_fil_m = asiParser.filter_by_month(folder_all, start_m, end_m)
+
+        # Loagging
+        if self.run_mode == "DEBUG":
+            asiParser.log_folder_names(folder_all,
+                                       tag="All folder available", limit=20)
+            asiParser.log_folder_names(folder_fil_m,
+                                       tag="Filtered folder list", limit=20)
+
+        # Apply date filter
+        files_fil_mt = []
+        for i in trange(len(folder_fil_m), desc="Days"):
+            folder = folder_fil_m[i]
+            self.ftp_obj.cwd(self.ftp_working_dir + "/" + folder)
+            files = self.ftp_obj.nlst()
+
+            # TODO Add sampling here
+            # freq_flag => randomly sample on a per hour basis
+            for j in range(len(files)):
+                file = files[j]
+                if file.split(".")[-1] == "jpg":
+                    date_flag = asiParser.filter_by_time(file,
+                                                         start_hr,
+                                                         end_hr)
+                    if date_flag:
+                        files_fil_mt.append(self.ftp_working_dir + "/" +
+                                            folder + "/" + file)
+
+        if self.run_mode == "DEBUG":
+            asiParser.log_dataset_size(num_files=len(files_fil_mt),
+                                       sampling_rate=s_rate)
+
+        # Apply Sampling filter
+        if s_rate > 1:
+            files_fil_mts = asiParser.sampling_per_hour(files_fil_mt,
+                                                        s_rate)
+        else:
+            return files_fil_mt
+
+        return files_fil_mts
+
+    def download_files(self, start_month, end_month, start_hr, end_hr, s_rate):
+
+        sampled_file_paths = self.get_filtered_files(start_m=start_month,
+                                                     end_m=end_month,
+                                                     start_h=start_hr,
+                                                     end_h=end_hr,
+                                                     s_rate=s_rate)
 
         for file_path in tqdm(sampled_file_paths):
 
@@ -165,24 +173,21 @@ class GetImagesPls:
             self.ftp_obj.retrbinary('RETR ' + file_name, local_file.write)
             local_file.close()
 
-    def logging_1(self):
-        """Logging for filtered folder list
+    @staticmethod
+    def log_folder_names(folder_list, tag, limit=0):
+        """Logging folder list
         """
-        print(self.filtered_date_list)
+        print(tag)
+        pprint(folder_list[0:limit])
 
-    def logging_2(self):
-        pprint(self.all_file_paths[:10])
+    @staticmethod
+    def log_dataset_size(num_files, sampling_rate, img_size_kb=180):
 
-    def logging_3(self):
-        pprint(self.sampling_per_hour()[:10])
+        d_size_original = (num_files * img_size_kb) / 1000000
+        d_size_sample = abs(d_size_original / sampling_rate)
 
-    def logging_4(self, img_size_kb=180):
-
-        d_size_original = (len(self.all_file_paths) * img_size_kb) / 1000000
-        d_size_sample = d_size_original / self.sampling_rate
-
-        print(f"Original Size: {d_size_original:.2f} GB")
-        print(f"Sample Size: {d_size_sample:.2f} GB")
+        print(f"Original Size:\t {d_size_original:.3f} GB")
+        print(f"Sample Size:\t {d_size_sample:.3f} GB")
 
 
 def main():
@@ -196,29 +201,23 @@ def main():
     ftp_working_dir = "/asi16_data/asi_16030"
     local_output_path = "dataset/asi"
 
-    # Creting getimgobj
-    some_obj = GetImagesPls(ftp_host,
-                            ftp_username,
-                            ftp_passwd,
-                            ftp_working_dir,
-                            local_output_path,
-                            start_month=7,
-                            end_month=7,
-                            start_hr=12,
-                            end_hr=12,
-                            sampling_rate=20)
+    # Creating ftp parser obj
+    some_obj = asiParser(ftp_host,
+                         ftp_username,
+                         ftp_passwd,
+                         ftp_working_dir,
+                         local_output_path,
+                         run_mode="RUN")
 
-    some_obj.filter_by_month()
-    # some_obj.logging_1()
+    sample_dates = some_obj.get_filtered_files(start_m=7,
+                                               end_m=7,
+                                               start_hr=12,
+                                               end_hr=12,
+                                               s_rate=20)
 
-    some_obj.fetch_file_names()
+    pprint(sample_dates[0:10])
 
-    # some_obj.logging_2()
-    # some_obj.logging_3()
-
-    some_obj.logging_4()
-
-    some_obj.download_files()
+    # some_obj.download_files()
 
 
 if __name__ == "__main__":
