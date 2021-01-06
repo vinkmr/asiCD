@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import argparse
 
+from tornado.netutil import ThreadedResolver
+
 
 # Local Moduels
 from asiCD.asiCD_utils import img_from_file
@@ -12,7 +14,7 @@ from asiCD.asiCD_utils import img_from_file
 def sun_remover_v1(img_arr, args, fill_mode=-1):
 
     if fill_mode != -1:
-        fill_mode == 2
+        fill_mode == 3
 
     # https://www.pyimagesearch.com/2014/09/29/finding-brightest-spot-image-using-python-opencv/
     # Convert image to grayscale adnd apply Gaussian blur
@@ -47,7 +49,17 @@ def sun_remover_v2(img_arr, args, fill_mode=-1):
     thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=2)
     thresh = cv2.dilate(src=thresh, kernel=retval_dilate, iterations=4)
 
-    return thresh
+    # TODO Refactor
+    # thresh = np.array(thresh/255, dtype="int")
+    mask = np.zeros([thresh.shape[0], thresh.shape[1], 3])
+
+    mask[:, :, 0] = thresh
+    mask[:, :, 1] = thresh
+    mask[:, :, 2] = thresh
+
+    img_arr = np.where(mask, img_arr, 0)
+
+    return img_arr
 
 
 def main():
@@ -59,7 +71,7 @@ def main():
                     help="index of image file")
     ap.add_argument("-r", "--radius", type=int, default=120,
                     help="radius of sun circle for sun_remover_v1")
-    ap.add_argument("-t", "--thres_low", type=int, default=220,
+    ap.add_argument("-t", "--thres_low", type=int, default=253,
                     help="lower thershold for sun_remover_v2")
     args = vars(ap.parse_args())
 
@@ -68,7 +80,7 @@ def main():
     img_arr = img_from_file(str(img_files[args["image_id"]]))
 
     # Remove sun from image
-    img_arr_v1 = sun_remover_v1(img_arr, args, fill_mode=2)
+    img_arr_v1 = sun_remover_v1(img_arr, args, fill_mode=-1)
     img_arr_v2 = sun_remover_v2(img_arr, args)
 
     # Showing results
@@ -81,7 +93,7 @@ def main():
 
     plt.subplot(1, 2, 2)
     plt.title("sun_remover_v2")
-    plt.imshow(img_arr_v2, cmap='magma')
+    plt.imshow(img_arr_v2)
     plt.axis("off")
 
     plt.show()
