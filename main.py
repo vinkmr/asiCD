@@ -16,6 +16,8 @@ argparser = argparse.ArgumentParser(
 argparser.add_argument("-c", "--config", help="path to configuration file")
 
 # %% Image transformation squareCrop
+
+
 def square_crop(imageLoc: str, amount: int):
     """
     Crops the provided image by 'amount' pixels.
@@ -38,7 +40,7 @@ def square_crop(imageLoc: str, amount: int):
     y = int(y / 2)
 
     cv.circle(img, (x, y), r, (0, 0, 0), 2)
-    crpdimg = img[x - r : x + r, y - r : y + r]
+    crpdimg = img[x - r: x + r, y - r: y + r]
 
     # for debugging
     # cv.imshow("image", crpdimg)
@@ -88,7 +90,7 @@ def apply_circular_mask(sq_image, radius: int):
 
 
 # %% preprocess block
-def preprocess(datapath: str,output_path:str, crop_depth: int):
+def preprocess(datapath: str, output_path: str, crop_depth: int):
 
     print("Preprocess called.")
     rootdir = datapath
@@ -96,13 +98,15 @@ def preprocess(datapath: str,output_path:str, crop_depth: int):
     crop_depth = crop_depth
     for subdir, dirs, files in os.walk(rootdir):
         # for dir in subdir:
-            for file in files:
-                # print("\n")
-                # print(os.path.join(subdir, file))
-                img_cropped, radius = square_crop(os.path.join(subdir, file), crop_depth)
-                img_masked = apply_circular_mask(img_cropped, radius)
-                cv.imwrite((output_path+file[:-4]+"_cropped"+file[-4:]), img_masked)
-                # cv.imwrite((output_path+file[:-4]+dir+"_cropped"+file[-4:]), img_masked)
+        for file in files:
+            # print("\n")
+            # print(os.path.join(subdir, file))
+            img_cropped, radius = square_crop(
+                os.path.join(subdir, file), crop_depth)
+            img_masked = apply_circular_mask(img_cropped, radius)
+            cv.imwrite(
+                (output_path+file[:-4]+"_cropped"+file[-4:]), img_masked)
+            # cv.imwrite((output_path+file[:-4]+dir+"_cropped"+file[-4:]), img_masked)
     print("\nPreprocessing Done.")
     return False
 
@@ -117,7 +121,8 @@ def _main_(args):
     # Test message
     print("Main method called")
 
-    preprocess(config["preprocess"]["dataset_path"],config["preprocess"]["prep_dataset_path"], config["preprocess"]["crop_px"])
+    preprocess(config["preprocess"]["dataset_path"], config["preprocess"]
+               ["prep_dataset_path"], config["preprocess"]["crop_px"])
     # img_cropped, radius = square_crop(
     #     ".\dataset\\20190701045440_11.jpg", config["preprocess"]["crop_px"]
     # )
