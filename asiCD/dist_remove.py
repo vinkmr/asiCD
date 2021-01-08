@@ -4,8 +4,10 @@ from pathlib import Path
 
 # Local Modules
 from asiCD.asiCD_utils import load_json
+from asiCD.decorators import timef
 
 
+@timef
 def undistort(img_arr, camera_config):
     DIM = tuple(camera_config["DIM"])
     K = np.asarray(camera_config["K"])

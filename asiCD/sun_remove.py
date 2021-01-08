@@ -4,13 +4,12 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import argparse
 
-from tornado.netutil import ThreadedResolver
-
-
 # Local Moduels
 from asiCD.asiCD_utils import img_from_file
+from asiCD.decorators import timef
 
 
+@timef
 def sun_remover_v1(img_arr, args, fill_mode=-1):
 
     if fill_mode != -1:
@@ -30,23 +29,24 @@ def sun_remover_v1(img_arr, args, fill_mode=-1):
     return img_arr
 
 
+@timef
 def sun_remover_v2(img_arr, args, fill_mode=-1):
 
     # https://www.pyimagesearch.com/2016/10/31/detecting-multiple-bright-spots-in-an-image-with-python-and-opencv/
-    # Convert image to grayscale adnd apply Gaussian blur
+    # Convert image to grayscale add apply Gaussian blur
     gray = cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (7, 7), 0)
 
     # Find the brightest region
     thresh = cv2.threshold(blurred,
-                           args["thres_low"], 255, cv2.THRESH_BINARY_INV)[1]
+                           args["thres_low"], 255, cv2.THRESH_BINARY)[1]
 
     retval_erode = cv2.getStructuringElement(shape=cv2.MORPH_RECT,
                                              ksize=(9, 9))
     retval_dilate = cv2.getStructuringElement(shape=cv2.MORPH_RECT,
                                               ksize=(9, 9))
 
-    thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=2)
+    thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=4)
     thresh = cv2.dilate(src=thresh, kernel=retval_dilate, iterations=4)
 
     # TODO Refactor
@@ -59,12 +59,13 @@ def sun_remover_v2(img_arr, args, fill_mode=-1):
 
     img_arr = np.where(mask, img_arr, 0)
 
-    return img_arr
+    return thresh
 
 
 def main():
 
     # construct the argument parse and parse the arguments
+
     ap = argparse.ArgumentParser(
         description='Detect and encircle the sun for a provided image')
     ap.add_argument("-i", "--image_id", type=int, default=0,

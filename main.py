@@ -74,7 +74,7 @@ def apply_circular_mask(sq_image, radius: int):
     rows, cols, channels = img1.shape
     roi = img1[0:rows, 0:cols]
     img2gray = cv.cvtColor(img2, cv.COLOR_BGR2GRAY)
-    ret, mask = cv.threshold(img2gray, 10, 255, cv.THRESH_BINARY_INV)
+    ret, mask = cv.threshold(img2gray, 10, 255, cv.THRESH_BINARY)
     mask_inv = cv.bitwise_not(mask)
 
     img1_bg = cv.bitwise_and(roi, roi, mask=mask)
