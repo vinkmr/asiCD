@@ -54,7 +54,17 @@ def sun_remover_v2(img_arr, args, fill=True):
     thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=2)
     thresh = cv2.dilate(src=thresh, kernel=retval_dilate, iterations=4)
 
-    return thresh
+    # TODO Refactor
+    # thresh = np.array(thresh/255, dtype="int")
+    mask = np.zeros([thresh.shape[0], thresh.shape[1], 3])
+
+    mask[:, :, 0] = thresh
+    mask[:, :, 1] = thresh
+    mask[:, :, 2] = thresh
+
+    img_arr = np.where(mask, img_arr, 0)
+
+    return img_arr
 
 
 def main():
@@ -66,7 +76,7 @@ def main():
                     help="index of image file")
     ap.add_argument("-r", "--radius", type=int, default=120,
                     help="radius of sun circle for sun_remover_v1")
-    ap.add_argument("-t", "--thres_low", type=int, default=220,
+    ap.add_argument("-t", "--thres_low", type=int, default=253,
                     help="lower thershold for sun_remover_v2")
     args = vars(ap.parse_args())
 
@@ -88,7 +98,7 @@ def main():
 
     plt.subplot(1, 2, 2)
     plt.title("sun_remover_v2")
-    plt.imshow(img_arr_v2, cmap='magma')
+    plt.imshow(img_arr_v2)
     plt.axis("off")
 
     plt.show()
