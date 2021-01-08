@@ -3,7 +3,6 @@ from tqdm import trange
 from tqdm import tqdm
 from pprint import pprint
 
-
 # Local Modules
 from asiCD.asiCD_utils import load_json
 

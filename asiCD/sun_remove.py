@@ -10,7 +10,7 @@ from asiCD.decorators import timef
 
 
 @timef
-def sun_remover_v1(img_arr, args, fill=-1):
+def sun_remover_v1(img_arr, args, fill=True):
 
     if fill is True:
         fill = -1
@@ -31,6 +31,7 @@ def sun_remover_v1(img_arr, args, fill=-1):
     return img_arr
 
 
+@timef
 def sun_remover_v2(img_arr, args, fill=True):
     # https://www.pyimagesearch.com/2016/10/31/detecting-multiple-bright-spots-in-an-image-with-python-and-opencv/
 
