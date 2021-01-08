@@ -10,10 +10,12 @@ from asiCD.decorators import timef
 
 
 @timef
-def sun_remover_v1(img_arr, args, fill_mode=-1):
+def sun_remover_v1(img_arr, args, fill=-1):
 
-    if fill_mode != -1:
-        fill_mode == 3
+    if fill is True:
+        fill = -1
+    else:
+        fill = 2
 
     # https://www.pyimagesearch.com/2014/09/29/finding-brightest-spot-image-using-python-opencv/
     # Convert image to grayscale adnd apply Gaussian blur
@@ -24,16 +26,20 @@ def sun_remover_v1(img_arr, args, fill_mode=-1):
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(gray)
 
     img_arr = cv2.circle(img_arr.copy(), maxLoc, args["radius"],
-                         (0, 0, 0), fill_mode)
+                         (0, 0, 0), fill)
 
     return img_arr
 
 
-@timef
-def sun_remover_v2(img_arr, args, fill_mode=-1):
-
+def sun_remover_v2(img_arr, args, fill=True):
     # https://www.pyimagesearch.com/2016/10/31/detecting-multiple-bright-spots-in-an-image-with-python-and-opencv/
-    # Convert image to grayscale add apply Gaussian blur
+
+    if fill is True:
+        fill = -1
+    else:
+        fill = 2
+
+    # Convert image to grayscale adnd apply Gaussian blur
     gray = cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (7, 7), 0)
 
@@ -81,7 +87,7 @@ def main():
     img_arr = img_from_file(str(img_files[args["image_id"]]))
 
     # Remove sun from image
-    img_arr_v1 = sun_remover_v1(img_arr, args, fill_mode=-1)
+    img_arr_v1 = sun_remover_v1(img_arr, args, fill=True)
     img_arr_v2 = sun_remover_v2(img_arr, args)
 
     # Showing results
