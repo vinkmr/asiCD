@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import argparse
 
-from numpy.core.defchararray import array
-
 # Local Moduels
 from asiCD.asiCD_utils import img_from_file
 from asiCD.decorators import timef

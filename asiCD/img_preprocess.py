@@ -31,8 +31,8 @@ def main():
     img_arr = img_from_file(str(img_files[args["image_id"]]))
 
     # Remove distortion
-    config = load_json("camera_config.json")
-    img_arr_undist = undistort(img_arr, config)
+    config = load_json("config.json")
+    img_arr_undist = undistort(img_arr, config["undistort"])
 
     # Remove sun from image
     img_arr_v1 = sun_remover_v1(img_arr_undist, args, fill=True)

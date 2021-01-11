@@ -28,7 +28,7 @@ def undistort(img_arr, camera_config):
 if __name__ == '__main__':
 
     images = list(Path("dataset/asi").glob("**/*.jpg"))
-    config = load_json("camera_config.json")
+    config = load_json("config.json")["undistort"]
 
     for img_file in images:
         img = cv2.imread(str(img_file))
