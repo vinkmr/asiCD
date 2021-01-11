@@ -14,7 +14,6 @@ from asiCD.sun_remove import sun_remover_v2
 def main():
 
     # construct the argument parse and parse the arguments
-    global args
 
     ap = argparse.ArgumentParser(
         description='Detect and encircle the sun for a provided image')
