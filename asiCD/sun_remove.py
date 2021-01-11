@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 import argparse
@@ -42,7 +41,7 @@ def sun_remover_v2(img_arr, args, fill=True):
 
     # Convert image to grayscale adnd apply Gaussian blur
     gray = cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+    blurred = cv2.GaussianBlur(gray, (9, 9), 0)
 
     # Find the brightest region
     thresh = cv2.threshold(blurred,
@@ -53,20 +52,13 @@ def sun_remover_v2(img_arr, args, fill=True):
     retval_dilate = cv2.getStructuringElement(shape=cv2.MORPH_RECT,
                                               ksize=(9, 9))
 
-    thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=4)
+    thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=5)
     thresh = cv2.dilate(src=thresh, kernel=retval_dilate, iterations=4)
 
-    # TODO Refactor
-    # thresh = np.array(thresh/255, dtype="int")
-    mask = np.zeros([thresh.shape[0], thresh.shape[1], 3])
+    # Applying mask
+    img_arr = cv2.bitwise_and(img_arr, img_arr, mask=cv2.bitwise_not(thresh))
 
-    mask[:, :, 0] = thresh
-    mask[:, :, 1] = thresh
-    mask[:, :, 2] = thresh
-
-    img_arr = np.where(mask, img_arr, 0)
-
-    return thresh
+    return img_arr
 
 
 def main():

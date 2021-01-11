@@ -36,7 +36,7 @@ def main():
     img_arr_undist = undistort(img_arr, config)
 
     # Remove sun from image
-    img_arr_v1 = sun_remover_v1(img_arr_undist, args, fill_mode=-1)
+    img_arr_v1 = sun_remover_v1(img_arr_undist, args, fill=True)
     img_arr_v2 = sun_remover_v2(img_arr_undist, args)
 
     # Showing results
