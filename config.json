@@ -4,7 +4,7 @@
         "dataset_path":".\\dataset\\actual\\",
         "prep_dataset_path":".\\dataset\\cropped\\"
     } ,
-    "dataset_path": "dataset/swimseg-2",
+    "dataset_path": "dataset/swimseg-2-modded",
     "model":{
         
     },
