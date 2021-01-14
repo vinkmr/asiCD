@@ -73,11 +73,11 @@ def get_img_mask_generators(dataset_path, aug_config, SEED=1,
 
     mask_generator = mask_datagen.flow_from_directory(dataset_path + labels_path_mod,
                                                       target_size=aug_config["target_size"],
-                                                      color_mode="grayscale",
+                                                      color_mode="rgb",
                                                       class_mode=None,
                                                       seed=SEED)
 
     # combine generators into one which yields image and masks
-    data_generator = zip(image_generator, mask_generator)
+    date_generator = zip(image_generator, mask_generator)
 
-    return data_generator
+    return date_generator

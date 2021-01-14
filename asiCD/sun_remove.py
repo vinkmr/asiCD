@@ -2,6 +2,8 @@ import cv2
 import matplotlib.pyplot as plt
 from pathlib import Path
 import argparse
+import numpy as np
+import imutils
 
 # Local Moduels
 from asiCD.asiCD_utils import img_from_file
@@ -24,7 +26,7 @@ def sun_remover_v1(img_arr, args, fill=True):
     # Find the brightest region
     (_, maxVal, _, maxLoc) = cv2.minMaxLoc(blurred)
 
-    if maxVal >= args["thres_low"]:
+    if maxVal >= args["low_thres"]:
         img_arr = cv2.circle(img_arr.copy(), maxLoc, args["radius"],
                              (0, 0, 0), thickness=fill)
 
@@ -46,7 +48,7 @@ def sun_remover_v2(img_arr, args, fill=True):
 
     # Find the brightest region
     thresh = cv2.threshold(blurred,
-                           args["thres_low"], 255, cv2.THRESH_BINARY)[1]
+                           args["low_thres"], 255, cv2.THRESH_BINARY)[1]
 
     if thresh.any():
         retval_erode = cv2.getStructuringElement(shape=cv2.MORPH_RECT,
@@ -57,8 +59,65 @@ def sun_remover_v2(img_arr, args, fill=True):
         thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=3)
         thresh = cv2.dilate(src=thresh, kernel=retval_dilate, iterations=4)
 
-    # Applying mask
-    img_arr = cv2.bitwise_and(img_arr, img_arr, mask=cv2.bitwise_not(thresh))
+    # Applying mask v1
+    mask = cv2.bitwise_not(thresh)
+    output = cv2.bitwise_and(img_arr, img_arr, mask=mask)
+
+    # Applyting mask v2
+    # mask = cv2.bitwise_not(thresh)
+    # print(np.max(mask))
+    # print(np.min(mask))
+
+    # output = np.zeros(img_arr.shape)
+    # output[..., 0] = img_arr[..., 0] * mask / 255
+    # output[..., 1] = img_arr[..., 1] * mask / 255
+    # output[..., 2] = img_arr[..., 2] * mask / 255
+
+    return output
+
+
+@timef
+def sun_remover_v3(img_arr, args, fill=True):
+    # https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/
+
+    if fill is True:
+        fill = -1
+    else:
+        fill = 2
+
+    # Convert image to grayscale adnd apply Gaussian blur
+    gray = cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+
+    # Find the brightest region
+    thresh = cv2.threshold(blurred,
+                           args["low_thres"], 255, cv2.THRESH_BINARY)[1]
+
+    if thresh.any():
+        retval_erode = cv2.getStructuringElement(shape=cv2.MORPH_RECT,
+                                                 ksize=(9, 9))
+        retval_dilate = cv2.getStructuringElement(shape=cv2.MORPH_RECT,
+                                                  ksize=(9, 9))
+
+        thresh = cv2.erode(src=thresh, kernel=retval_erode, iterations=3)
+        thresh = cv2.dilate(src=thresh, kernel=retval_dilate, iterations=4)
+
+    # find contours in the thresholded image
+    cnts = cv2.findContours(thresh.copy(),
+                            cv2.RETR_EXTERNAL,
+                            cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
+
+    # loop over the contours
+    for c in cnts:
+        # compute the center of the contour
+        M = cv2.moments(c)
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+
+        # draw the contour and center of the shape on the image
+        cv2.drawContours(img_arr, [c], -1, (0, 255, 0), 2)
+        cv2.circle(img_arr, (cX, cY), 7, (255, 255, 255), -1)
 
     return img_arr
 
@@ -73,7 +132,7 @@ def main():
                     help="index of image file")
     ap.add_argument("-r", "--radius", type=int, default=100,
                     help="radius of sun circle for sun_remover_v1")
-    ap.add_argument("-t", "--thres_low", type=int, default=253,
+    ap.add_argument("-t", "--low_thres", type=int, default=253,
                     help="lower thershold for sun_remover_v2")
     args = vars(ap.parse_args())
 

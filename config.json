@@ -4,7 +4,7 @@
         "dataset_path":".\\dataset\\actual\\",
         "prep_dataset_path":".\\dataset\\cropped\\"
     } ,
-    "dataset_path": "dataset/swimseg-2-modded",
+    "dataset_path": "dataset/asi",
     "model":{
         
     },
@@ -22,7 +22,8 @@
         "radius": 110,
         "low_thres":253
     },
+    "thres": 180,
     "aug_config": {
-        "target_size": [128, 128]
+        "target_size": [1920, 1920]
     }
 }
