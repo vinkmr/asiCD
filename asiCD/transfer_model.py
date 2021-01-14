@@ -1,5 +1,5 @@
 # * https://www.tensorflow.org/guide/keras/save_and_serialize#the_short_answer_to_saving_loading
-
+import glob
 from tensorflow.keras import backend as K
 from tensorflow.keras import models
 from tensorflow.keras import Model
@@ -10,7 +10,7 @@ from tensorflow.keras.optimizers import Adam, RMSprop, SGD
 class some_transfer_model:
     def __init__(
         self,
-        path_to_model_h5: str = "some_weights.h5",
+        path_to_model_h5: str = glob.glob('*.h5')[0],
         percentage_layers_trainable: int = 0.1,
         debug: bool = False,
     ):
