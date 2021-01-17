@@ -1,0 +1,49 @@
+{% extends 'base.html'%} {{ super() }}
+
+{% block title %}
+    Home Page
+{% endblock %}
+
+{% block content %}
+<body>
+    <h1>Home Page</h1>
+    <div class="col-md-4 col-md-offset-4">
+        <form method="POST" action="/home">
+            <h2>Process</h2>
+
+            <div class="form-group">
+                <label for="name">Image Directory</label>
+                <input
+                type="text"
+                class="form-control"
+                id="img_dir"
+                name="img_dir"
+                placeholder="Enter source folder"
+                />
+            </div>       
+            
+            <div class="form-group">
+                <label for="name">Img File</label>
+                <input
+                type="text"
+                class="form-control"
+                id="img_file"
+                name="img_file"
+                placeholder="Select img id"
+                />
+            </div>
+    
+            <button type="Go" class="btn btn-primary">Load</button>    
+            
+            
+        </form>
+        </div>
+
+        <img 
+        src="{{ url_for('static', filename=img_id)}}" 
+        alt="cloud-pic"
+        width="500" height="500"
+        >
+    
+{% endblock %}
+    
