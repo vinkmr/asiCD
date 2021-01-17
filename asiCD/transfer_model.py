@@ -23,9 +23,10 @@ class some_transfer_model:
             prev_model=self.pretrained_model
         )
 
-    def freeze(self,percentage_layers_trainable: int, prev_model: Model):
+    def freeze(self, percentage_layers_trainable: int, prev_model: Model):
 
-        num_trainable_layers = int(len(prev_model.layers) * percentage_layers_trainable)
+        num_trainable_layers = int(
+            len(prev_model.layers) * percentage_layers_trainable)
 
         for layer in prev_model.layers[:num_trainable_layers]:
             layer.trainable = False
@@ -55,13 +56,9 @@ class some_transfer_model:
 
         if self.debug:
             model.summary()
-            print(
-                "\n====================================================================\n"
-            )
+            print("\n======================================================\n")
             print("\t\t\tNon-Trainable Layers\t\t\t")
-            print(
-                "\n====================================================================\n"
-            )
+            print("\n======================================================\n")
             count = 0
             for layer in model.layers:
                 if layer.trainable == False:
