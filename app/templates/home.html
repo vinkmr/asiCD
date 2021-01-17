@@ -18,7 +18,7 @@
                 class="form-control"
                 id="img_dir"
                 name="img_dir"
-                placeholder="Enter source folder"
+                placeholder="images"
                 />
             </div>       
             
@@ -29,18 +29,17 @@
                 class="form-control"
                 id="img_file"
                 name="img_file"
-                placeholder="Select img id"
+                placeholder="cloud_1"
                 />
             </div>
     
-            <button type="Go" class="btn btn-primary">Load</button>    
-            
-            
+            <button type="Go" class="btn btn-primary">Load</button>      
         </form>
-        </div>
+
+        </div>        
 
         <img 
-        src="{{ url_for('static', filename=img_id)}}" 
+        src="{{ url_for('static', filename=img_id) }}"
         alt="cloud-pic"
         width="500" height="500"
         >
