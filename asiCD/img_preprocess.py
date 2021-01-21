@@ -9,6 +9,7 @@ from asiCD.asiCD_utils import load_json
 from asiCD.dist_remove import undistort
 from asiCD.sun_remove import sun_remover_v1
 from asiCD.sun_remove import sun_remover_v2
+# from asiCD.sun_remove import sun_remover_v3
 
 
 def main():
@@ -21,22 +22,21 @@ def main():
                     help="index of image file")
     ap.add_argument("-r", "--radius", type=int, default=120,
                     help="radius of sun circle for sun_remover_v1")
-    ap.add_argument("-t", "--thres_low", type=int, default=253,
+    ap.add_argument("-t", "--low_thres", type=int, default=253,
                     help="lower thershold for sun_remover_v2")
     args = vars(ap.parse_args())
 
     # Fetch image
-
     img_files = list(Path("dataset/asi").glob("**/*.jpg"))
     img_arr = img_from_file(str(img_files[args["image_id"]]))
 
     # Remove distortion
     config = load_json("config.json")
-    img_arr_undist = undistort(img_arr, config["undistort"])
+    img_arr_undist = undistort(img_arr.copy(), config["undistort"])
 
     # Remove sun from image
-    img_arr_v1 = sun_remover_v1(img_arr_undist, args, fill=True)
-    img_arr_v2 = sun_remover_v2(img_arr_undist, args)
+    img_arr_v1 = sun_remover_v1(img_arr_undist.copy(), args, fill=True)
+    img_arr_v2 = sun_remover_v2(img_arr_undist.copy(), args)
 
     # Showing results
     plt.figure(figsize=(12, 4))
