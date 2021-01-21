@@ -12,10 +12,38 @@ from asiCD.sun_remove import sun_remover_v2
 # from asiCD.sun_remove import sun_remover_v3
 
 
+def img_preprocess(img_files, img_id, config, args):
+    """Returns imgages in each step of preprocessing
+
+    Args:
+        img_files (list): List of image file paths
+        img_id (int): Image id
+        config (dict): Config dict
+        args (dict): Passed arguments dict
+
+    Returns:
+        numpy.array: Original Image array
+        numpy.array: Undistorted Image array
+        numpy.array: Undistorted Image array with sun removed (v1)
+        numpy.array: Undistorted Image array with sun removed (v2)
+    """
+
+    # Load image
+    img_orig = img_from_file(str(img_files[img_id]))
+
+    # Remove distortion
+    img_undist = undistort(img_orig.copy(), config["undistort"])
+
+    # Remove sun from image
+    img_sun_v1 = sun_remover_v1(img_undist.copy(), args, fill=True)
+    img_sun_v2 = sun_remover_v2(img_undist.copy(), args)
+
+    return img_orig, img_undist, img_sun_v1, img_sun_v2
+
+
 def main():
 
     # construct the argument parse and parse the arguments
-
     ap = argparse.ArgumentParser(
         description='Detect and encircle the sun for a provided image')
     ap.add_argument("-i", "--image_id", type=int, default=0,
@@ -26,42 +54,52 @@ def main():
                     help="lower thershold for sun_remover_v2")
     args = vars(ap.parse_args())
 
-    # Fetch image
+    # Fetch image files
     img_files = list(Path("dataset/asi").glob("**/*.jpg"))
-    img_arr = img_from_file(str(img_files[args["image_id"]]))
-
-    # Remove distortion
     config = load_json("config.json")
-    img_arr_undist = undistort(img_arr.copy(), config["undistort"])
 
-    # Remove sun from image
-    img_arr_v1 = sun_remover_v1(img_arr_undist.copy(), args, fill=True)
-    img_arr_v2 = sun_remover_v2(img_arr_undist.copy(), args)
+    # img, img_u, img_s_v1, img_s_v2 = img_preprocess(img_files,
+    #                                                 img_id=args["image_id"],
+    #                                                 config=config,
+    #                                                 args=args)
 
-    # Showing results
-    plt.figure(figsize=(12, 4))
+    img_picks = [0, 50, 23,  9]
+    num_rows = len(img_picks)
+    fig_counter = 0
+    plt.figure(figsize=(12, 12))
 
-    plt.subplot(1, 4, 1)
-    plt.title("Original image")
-    plt.imshow(img_arr)
-    plt.axis("off")
+    for img_id in img_picks:
 
-    plt.subplot(1, 4, 2)
-    plt.title("Undistored image")
-    plt.imshow(img_arr_undist)
-    plt.axis("off")
+        img, img_u, img_s_v1, img_s_v2 = img_preprocess(img_files,
+                                                        img_id=img_id,
+                                                        config=config,
+                                                        args=args)
 
-    plt.subplot(1, 4, 3)
-    plt.title("sun_remover_v1")
-    plt.imshow(img_arr_v1)
-    plt.axis("off")
+        # Showing results
+        plt.subplot(num_rows, 4, fig_counter+1)
+        plt.title("Original image")
+        plt.imshow(img)
+        plt.axis("off")
 
-    plt.subplot(1, 4, 4)
-    plt.title("sun_remover_v2")
-    plt.imshow(img_arr_v2)
-    plt.axis("off")
+        plt.subplot(num_rows, 4, fig_counter+2)
+        plt.title("Undistored image")
+        plt.imshow(img_u)
+        plt.axis("off")
 
-    plt.tight_layout()
+        plt.subplot(num_rows, 4, fig_counter+3)
+        plt.title("sun_remover_v1")
+        plt.imshow(img_s_v1)
+        plt.axis("off")
+
+        plt.subplot(num_rows, 4, fig_counter+4)
+        plt.title("sun_remover_v2")
+        plt.imshow(img_s_v2)
+        plt.axis("off")
+
+        plt.tight_layout()
+        fig_counter += 4
+
+    # plt.savefig("./preprocess-example.png")
     plt.show()
 
     return None
