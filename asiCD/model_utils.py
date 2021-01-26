@@ -73,7 +73,7 @@ def get_img_mask_generators(dataset_path, aug_config, SEED=1,
 
     mask_generator = mask_datagen.flow_from_directory(dataset_path + labels_path_mod,
                                                       target_size=aug_config["target_size"],
-                                                      color_mode="rgb",
+                                                      color_mode="grayscale",
                                                       class_mode=None,
                                                       seed=SEED)
 
