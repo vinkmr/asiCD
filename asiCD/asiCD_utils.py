@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import datetime
 from pathlib import Path
 from json import load as json_load
@@ -19,9 +20,15 @@ def load_json(json_file):
     return file_dict
 
 
-def img_from_file(img_file_inst):
-    img = cv2.imread(str(img_file_inst), cv2.IMREAD_UNCHANGED)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+def img_from_file(img_file_inst, load_grey=False, load_rgb=False):
+    if load_grey:
+        img = cv2.imread(str(img_file_inst), cv2.IMREAD_GRAYSCALE)
+        img = np.expand_dims(img, axis=-1)
+    elif load_rgb:
+        img = cv2.imread(str(img_file_inst), cv2.IMREAD_UNCHANGED)
+    else:
+        img = cv2.imread(str(img_file_inst), cv2.IMREAD_UNCHANGED)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     return img
 
