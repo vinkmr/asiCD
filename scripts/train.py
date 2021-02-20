@@ -27,7 +27,7 @@ def load_data(data_path, input_size):
     return train_generator, test_generator, val_generator
 
 
-def model_trainer(model, train_generator, test_generator, train_params):
+def model_trainer(model, train_gen, test_gen, train_params):
     """
     docstring
     """
@@ -39,10 +39,11 @@ def model_trainer(model, train_generator, test_generator, train_params):
                                      init_lr=train_params["lr"],
                                      epochs=train_params["epochs"])
 
-    model_hist = model.fit(train_generator,
+    model_hist = model.fit(zip(train_gen[0], train_gen[1]),
                            epochs=train_params["epochs"],
                            batch_size=train_params["batch_size"],
-                           validation_data=test_generator,
+                           validation_data=test_gen,
+                           validation_steps=train_params["val_steps"],
                            steps_per_epoch=train_params["steps_per_epoch"])
 
     return model
@@ -79,8 +80,8 @@ def main(data_path, output_path, config):
 
     for model_name in models:
         model_t = model_trainer(model=models[model_name],
-                                train_generator=train_gen,
-                                test_generator=test_gen,
+                                train_gen=train_gen,
+                                test_gen=test_gen,
                                 train_params=config["model_config"])
 
         model_save_results(model=model_t,

@@ -30,7 +30,7 @@
         "num_classes": 1,
         "epochs": 100,
         "lr": 0.01,
-        "batch_size": 32,
+        "batch_size": 16,
         "steps_per_epoch": 2,
         "val_steps": 1,
         "train_num": 100
