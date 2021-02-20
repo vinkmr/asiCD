@@ -25,5 +25,14 @@
     "thres": 180,
     "aug_config": {
         "target_size": [1920, 1920]
+    },
+    "model_config":{
+        "input_size": [128, 128],
+        "num_channels":3,
+        "epochs": 100,
+        "lr": 0.01,
+        "batch_size": 32,
+        "val_steps": 1,
+        "train_num": 100
     }
 }

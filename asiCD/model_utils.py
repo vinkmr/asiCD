@@ -52,10 +52,13 @@ def check_dataset(dataset_dict):
     return True
 
 
-def get_img_mask_generators(dataset_path, aug_config, SEED=1,
-                            labels_path_mod="_labels",
+def get_img_mask_generators(dataset_path,
+                            target_size,
+                            img_path="img",
+                            ann_path="ann",
                             img_preprocessor=None,
-                            mask_preprocessor=None):
+                            mask_preprocessor=None,
+                            SEED=1,):
     """
     docstring
     """
@@ -65,14 +68,14 @@ def get_img_mask_generators(dataset_path, aug_config, SEED=1,
     mask_datagen = ImageDataGenerator(rescale=1./255,
                                       preprocessing_function=mask_preprocessor)
 
-    image_generator = image_datagen.flow_from_directory(dataset_path,
-                                                        target_size=aug_config["target_size"],
+    image_generator = image_datagen.flow_from_directory(dataset_path + img_path,
+                                                        target_size=target_size,
                                                         color_mode="rgb",
                                                         class_mode=None,
                                                         seed=SEED)
 
-    mask_generator = mask_datagen.flow_from_directory(dataset_path + labels_path_mod,
-                                                      target_size=aug_config["target_size"],
+    mask_generator = mask_datagen.flow_from_directory(dataset_path + ann_path,
+                                                      target_size=target_size,
                                                       color_mode="grayscale",
                                                       class_mode=None,
                                                       seed=SEED)

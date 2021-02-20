@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import datetime
+from datetime import date, datetime
 from pathlib import Path
 from json import load as json_load
 
@@ -61,6 +61,8 @@ def create_dataset_dir(output_dir):
     timestamp = get_timestamp()
     folder_split = f"{output_dir}/{timestamp}"
     Path(folder_split).mkdir()
+
+    # TODO refactor using Path.mkdir(parents=True) for multiple
 
     # Test
     Path(f"{folder_split}/test").mkdir()
