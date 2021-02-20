@@ -36,14 +36,14 @@ def model_trainer(model, train_generator, test_generator, train_params):
                                      num_exp=train_params["num_exp"],
                                      num_classes=train_params["num_classes"],
                                      depth=train_params["num_channels"],
-                                     init_lr=train_params["init_lr"],
+                                     init_lr=train_params["lr"],
                                      epochs=train_params["epochs"])
 
     model_hist = model.fit(train_generator,
                            epochs=train_params["epochs"],
                            batch_size=train_params["batch_size"],
                            validation_data=test_generator,
-                           validation_steps=train_params["val_steps"])
+                           steps_per_epoch=train_params["steps_per_epoch"])
 
     return model
 
@@ -63,7 +63,7 @@ def main(data_path, output_path, config):
     INPUT_SIZE = tuple(config["model_config"]["input_size"])
 
     # Loading the data
-    train_gen, test_gen, val_gen = load_data(DATASET_PATH,
+    train_gen, test_gen, val_gen = load_data(data_path,
                                              INPUT_SIZE)
     # Loading the models
     # models = [model_vgg16,
@@ -81,7 +81,7 @@ def main(data_path, output_path, config):
         model_t = model_trainer(model=models[model_name],
                                 train_generator=train_gen,
                                 test_generator=test_gen,
-                                training_params=config["model_config"])
+                                train_params=config["model_config"])
 
         model_save_results(model=model_t,
                            model_name=model_name,
