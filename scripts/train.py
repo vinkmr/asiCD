@@ -13,15 +13,15 @@ from asiCD.models import model_densenet21
 def load_data(data_path, input_size):
 
     train_generator = get_img_mask_generators(
-        dataset_path=data_path + "/train",
+        dataset_path=data_path + "train/",
         target_size=input_size)
 
     test_generator = get_img_mask_generators(
-        dataset_path=data_path + "/test",
+        dataset_path=data_path + "test/",
         target_size=input_size)
 
     val_generator = get_img_mask_generators(
-        dataset_path=data_path + "/val",
+        dataset_path=data_path + "val/",
         target_size=input_size)
 
     return train_generator, test_generator, val_generator
@@ -96,7 +96,7 @@ def main(data_path, output_path, config):
 
 if __name__ == "__main__":
 
-    DATASET_PATH = "dataset/RASID100/train/"
+    DATASET_PATH = "dataset/RASID100/"
     OUTPUT_PATH = "outputs/model_out/" + get_timestamp()
 
     # Creating output path
