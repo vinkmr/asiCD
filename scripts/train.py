@@ -39,7 +39,7 @@ def model_trainer(model, train_gen, test_gen, train_params):
                                      init_lr=train_params["lr"],
                                      epochs=train_params["epochs"])
 
-    model_hist = model.fit(zip(train_gen[0], train_gen[1]),
+    model_hist = model.fit(train_gen,
                            epochs=train_params["epochs"],
                            batch_size=train_params["batch_size"],
                            validation_data=test_gen,

@@ -81,7 +81,7 @@ def get_img_mask_generators(dataset_path,
                                                       seed=SEED)
 
     # combine generators into one which yields image and masks
-    # date_generator = zip(image_generator, mask_generator)
-    date_generator = [image_generator, mask_generator]
+    # date_generator = [image_generator, mask_generator]
+    date_generator = zip(image_generator, mask_generator)
 
     return date_generator
