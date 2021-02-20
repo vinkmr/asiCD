@@ -19,6 +19,7 @@ from tensorflow.keras.layers import Reshape
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.layers import Add
 from tensorflow.keras.losses import CategoricalCrossentropy
+from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.optimizers import Adam
 
 
@@ -162,7 +163,7 @@ class MultiExpoNet:
         opt = Adam(lr=init_lr,
                    decay=init_lr / (epochs * 0.5))
 
-        model.compile(loss=CategoricalCrossentropy(from_logits=True),
+        model.compile(loss=BinaryCrossentropy(from_logits=True),
                       optimizer=opt,
                       metrics=["accuracy"])
         return model
