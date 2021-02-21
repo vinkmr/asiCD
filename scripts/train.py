@@ -10,19 +10,23 @@ from asiCD.models import model_resnet18
 from asiCD.models import model_densenet21
 
 
-def load_data(data_path, input_size):
+def load_train_data(data_path, input_size):
 
-    train_generator = get_img_mask_generators(
+    train_gen_X, train_gen_y = get_img_mask_generators(
         dataset_path=data_path + "train/",
         target_size=input_size)
 
-    test_generator = get_img_mask_generators(
+    test_gen_X, test_gen_y = get_img_mask_generators(
         dataset_path=data_path + "test/",
         target_size=input_size)
 
-    val_generator = get_img_mask_generators(
+    val_gen_X, val_gen_y = get_img_mask_generators(
         dataset_path=data_path + "val/",
         target_size=input_size)
+
+    train_generator = zip(train_gen_X, train_gen_y)
+    test_generator = zip(test_gen_X, test_gen_y)
+    val_generator = zip(val_gen_X, val_gen_y)
 
     return train_generator, test_generator, val_generator
 
@@ -64,8 +68,8 @@ def main(data_path, output_path, config):
     INPUT_SIZE = tuple(config["model_config"]["input_size"])
 
     # Loading the data
-    train_gen, test_gen, val_gen = load_data(data_path,
-                                             INPUT_SIZE)
+    train_gen, test_gen, val_gen = load_train_data(data_path,
+                                                   INPUT_SIZE)
     # Loading the models
     # models = [model_vgg16,
     #           model_resnet18,

@@ -7,21 +7,21 @@ from asiCD.asiCD_utils import img_save_to_path
 from asiCD.asiCD_utils import get_timestamp
 
 
-def load_data(data_path, input_size):
+def load_pred_data(data_path, input_size):
 
-    train_generator = get_img_mask_generators(
+    train_gen_X, _ = get_img_mask_generators(
         dataset_path=data_path + "train/",
         target_size=input_size)
 
-    test_generator = get_img_mask_generators(
+    test_gen_X, _ = get_img_mask_generators(
         dataset_path=data_path + "test/",
         target_size=input_size)
 
-    val_generator = get_img_mask_generators(
+    val_gen_X, _ = get_img_mask_generators(
         dataset_path=data_path + "val/",
         target_size=input_size)
 
-    return train_generator, test_generator, val_generator
+    return train_gen_X, test_gen_X, val_gen_X
 
 
 def model_loader(model_path):
@@ -67,8 +67,8 @@ def main(data_path, model_path, output_path, config):
     INPUT_SIZE = tuple(config["model_config"]["input_size"])
 
     # Loading the data
-    train_gen, test_gen, val_gen = load_data(data_path,
-                                             INPUT_SIZE)
+    train_gen, test_gen, val_gen = load_pred_data(data_path,
+                                                  INPUT_SIZE)
 
     data_gens = {"train": train_gen,
                  "test": test_gen,
