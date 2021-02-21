@@ -16,7 +16,7 @@ def main(output_path):
         plt.imshow(img)
         plt.colorbar()
         plt.clim(1, 10)
-        plt.axes("off")
+        plt.axis("off")
         plt.show()
 
     return None
