@@ -13,6 +13,7 @@ def main(output_path):
                   data_split+"/pred_"+str(img_id)+".png.npy")
 
     plt.imshow(img)
+    plt.colorbar()
     plt.show()
 
     return None
