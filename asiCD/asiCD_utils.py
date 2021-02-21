@@ -33,9 +33,9 @@ def img_from_file(img_file_inst, load_grey=False, load_rgb=False):
     return img
 
 
-def img_save_to_path(img_path):
+def img_save_to_path(img_path, img_inst):
 
-    cv2.imwrite(str(img_path), cv2.IMREAD_UNCHANGED)
+    cv2.imwrite(str(img_path), img_inst)
 
     return None
 

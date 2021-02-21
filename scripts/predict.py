@@ -47,11 +47,11 @@ def model_predictor(model, model_name, data_dict, output_path):
         predict_out_path = f"{output_path}/{model_name}/{data_g}"
         Path(predict_out_path).mkdir(parents=True)
 
-        # Making prediction
+        # Making predictions
         print(f"Num of images: {len(data_g)}")
 
         for i in range(10):
-            pred_img = model.predict((data_dict[data_g]).next(), step=1)
+            pred_img = model.predict((data_dict[data_g]).next())
             print(type(pred_img))
             print(pred_img.shape)
 
