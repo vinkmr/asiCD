@@ -51,13 +51,14 @@ def model_predictor(model, model_name, data_dict, output_path):
         print(f"Num of images: {len(data_g)}")
 
         for i in range(10):
-            pred_img = model.predict((data_dict[data_g]).next())
+            pred_img = model.predict((data_dict[data_g]).next(),
+                                     batch_size=1)
             print(type(pred_img))
             print(pred_img.shape)
 
             # Saving the prediction
             pred_path = f"{predict_out_path}/pred_{i}.png"
-            img_save_to_path(pred_path, pred_img)
+            img_save_to_path(pred_path, pred_img[0, ...])
 
     return None
 
