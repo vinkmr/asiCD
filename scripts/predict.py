@@ -58,7 +58,7 @@ def model_predictor(model, model_name, data_dict, output_path):
 
             # Saving the prediction
             pred_path = f"{predict_out_path}/pred_{i}.png"
-            img_save_to_path(pred_path, pred_img[0, ...])
+            img_save_to_path(pred_path, pred_img[0, :, :, 0])
 
     return None
 
@@ -91,6 +91,7 @@ def main(data_path, model_path, output_path, config):
 if __name__ == "__main__":
 
     DATASET_PATH = "dataset/RASID100/"
+    # MODEL_PATH = "outputs/model_out/2021-02-20-14-28/"
     MODEL_PATH = "outputs/model_out/2021-02-20-14-28/"
     OUTPUT_PATH = "outputs/postprocessing_out/" + get_timestamp()
 
