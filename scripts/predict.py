@@ -1,3 +1,4 @@
+import numpy as np
 from pathlib import Path
 from tensorflow.keras.models import load_model
 
@@ -56,7 +57,8 @@ def model_predictor(model, model_name, data_dict, output_path):
 
             # Saving the prediction
             pred_path = f"{predict_out_path}/pred_{i}.png"
-            img_save_to_path(pred_path, pred_img[0, :, :, 0])
+            # img_save_to_path(pred_path, pred_img[0, :, :, 0])
+            np.save(pred_img[0, ...], pred_path)
 
     return None
 
