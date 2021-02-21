@@ -53,8 +53,6 @@ def model_predictor(model, model_name, data_dict, output_path):
         for i in range(10):
             pred_img = model.predict((data_dict[data_g]).next(),
                                      batch_size=1)
-            print(type(pred_img))
-            print(pred_img.shape)
 
             # Saving the prediction
             pred_path = f"{predict_out_path}/pred_{i}.png"
@@ -90,9 +88,10 @@ def main(data_path, model_path, output_path, config):
 
 if __name__ == "__main__":
 
-    DATASET_PATH = "dataset/RASID100/"
+    # DATASET_PATH = "dataset/RASID100/"
+    DATASET_PATH = "dataset/swimseg-asiCD/"
     # MODEL_PATH = "outputs/model_out/2021-02-20-14-28/"
-    MODEL_PATH = "outputs/model_out/2021-02-20-14-28/"
+    MODEL_PATH = "outputs/model_out/2021-02-20-17-5/"
     OUTPUT_PATH = "outputs/postprocessing_out/" + get_timestamp()
 
     # Creating output path
