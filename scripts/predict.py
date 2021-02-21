@@ -96,8 +96,8 @@ def main(data_path, model_path, output_path, config):
 
 if __name__ == "__main__":
 
-    # DATASET_PATH = "dataset/RASID100/"
-    DATASET_PATH = "dataset/swimseg-asiCD/"
+    DATASET_PATH = "dataset/RASID100/"
+    # DATASET_PATH = "dataset/swimseg-asiCD/"
     # MODEL_PATH = "outputs/model_out/2021-02-20-14-28/"
     MODEL_PATH = "outputs/model_out/2021-02-20-17-5/"
     OUTPUT_PATH = "outputs/postprocessing_out/" + get_timestamp()

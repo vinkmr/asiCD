@@ -6,15 +6,18 @@ def main(output_path):
     """
     docstring
     """
-    model_name = "densenet21_last_w"
+    model_name = "vgg16_last_w"
     data_split = "train"
     img_id = 0
-    img = np.load(output_path+"/"+model_name+"/" +
-                  data_split+"/pred_"+str(img_id)+".png.npy")
+    for i in range(10):
+        img = np.load(output_path+"/"+model_name+"/" +
+                      data_split+"/pred_"+str(i)+".png.npy")
 
-    plt.imshow(img)
-    plt.colorbar()
-    plt.show()
+        plt.imshow(img)
+        plt.colorbar()
+        plt.clim(1, 10)
+        plt.axes("off")
+        plt.show()
 
     return None
 
