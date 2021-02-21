@@ -33,6 +33,13 @@ def img_from_file(img_file_inst, load_grey=False, load_rgb=False):
     return img
 
 
+def img_save_to_path(img_path):
+
+    cv2.imwrite(str(img_path), cv2.IMREAD_UNCHANGED)
+
+    return None
+
+
 def get_timestamp():
     now_d = datetime.now().date()
     now_t = datetime.now().time()

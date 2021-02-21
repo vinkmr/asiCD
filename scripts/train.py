@@ -74,12 +74,12 @@ def main(data_path, output_path, config):
     #                "resnet18",
     #                "densenet21"]
 
-    models = {"vgg16": model_vgg16,
-              "resnet18": model_resnet18,
-              "densenet21": model_densenet21}
+    models_dict = {"vgg16": model_vgg16,
+                   "resnet18": model_resnet18,
+                   "densenet21": model_densenet21}
 
-    for model_name in models:
-        model_t = model_trainer(model=models[model_name],
+    for model_name in models_dict:
+        model_t = model_trainer(model=models_dict[model_name],
                                 train_gen=train_gen,
                                 test_gen=test_gen,
                                 train_params=config["model_config"])
