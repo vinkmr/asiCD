@@ -64,7 +64,7 @@ def model_predictor(model, model_name, data_dict, output_path):
             img_save_to_path(pred_path, img_post)
 
             # Saving to npy
-            np.save(pred_path, pred_img[0, :, :, 0])
+            np.save(pred_path, img_post)
 
     return None
 
