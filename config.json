@@ -34,5 +34,9 @@
         "steps_per_epoch": 2,
         "val_steps": 1,
         "train_num": 100
+    },
+    "post-process":{
+        "low_thres": 0.05,
+        "high_thres": 1.0
     }
 }

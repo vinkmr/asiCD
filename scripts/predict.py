@@ -6,6 +6,7 @@ from asiCD.model_utils import get_img_mask_generators
 from asiCD.asiCD_utils import load_json
 from asiCD.asiCD_utils import img_save_to_path
 from asiCD.asiCD_utils import get_timestamp
+from asiCD.img_postprocessing import apply_post_processing
 
 
 def load_pred_data(data_path, input_size):
@@ -55,10 +56,13 @@ def model_predictor(model, model_name, data_dict, output_path):
             pred_img = model.predict((data_dict[data_g]).next(),
                                      batch_size=1)
 
+            # Applying post-processing
+            img_post = apply_post_processing(pred_img[0, :, :, 0])
+
             # Saving the prediction
             pred_path = f"{predict_out_path}/pred_{i}.png"
-            # img_save_to_path(pred_path, pred_img[0, :, :, 0])
-            np.save(pred_img[0, ...], pred_path)
+            img_save_to_path(pred_path, img_post)
+            # np.save(pred_path, pred_img[0, :, :, 0])
 
     return None
 
