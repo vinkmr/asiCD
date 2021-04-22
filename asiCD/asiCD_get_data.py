@@ -1,7 +1,9 @@
 import ftplib
-from tqdm import trange
-from tqdm import tqdm
+import os
+import sys
 from pprint import pprint
+
+from tqdm import tqdm, trange
 
 # Local Modules
 from asiCD.asiCD_utils import load_json
@@ -213,7 +215,14 @@ def main():
 
     ftp_working_dir = "/asi16_data/asi_16030"
     local_output_path = "dataset/asi"
-
+    
+    #create output folder if it doesn't exist
+    if not os.path.exists(local_output_path):
+        os.makedirs(local_output_path)     
+    else:
+        # print(f"\nOutput folder ({local_output_path}) already exists and is unclean.\nPlease delete existing folder at ({local_output_path}) try again!")
+        sys.exit(f"\nOutput folder ({local_output_path}) already exists and is unclean.\nPlease delete existing folder at ({local_output_path}) try again!")
+    
     # Creating ftp parser obj
     some_obj = asiParser(ftp_host,
                          ftp_username,
