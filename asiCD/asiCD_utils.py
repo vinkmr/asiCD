@@ -1,5 +1,6 @@
 import cv2
-import datetime
+import numpy as np
+from datetime import date, datetime
 from pathlib import Path
 from json import load as json_load
 
@@ -19,11 +20,24 @@ def load_json(json_file):
     return file_dict
 
 
-def img_from_file(img_file_inst):
-    img = cv2.imread(str(img_file_inst), cv2.IMREAD_UNCHANGED)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+def img_from_file(img_file_inst, load_grey=False, load_rgb=False):
+    if load_grey:
+        img = cv2.imread(str(img_file_inst), cv2.IMREAD_GRAYSCALE)
+        img = np.expand_dims(img, axis=-1)
+    elif load_rgb:
+        img = cv2.imread(str(img_file_inst), cv2.IMREAD_UNCHANGED)
+    else:
+        img = cv2.imread(str(img_file_inst), cv2.IMREAD_UNCHANGED)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     return img
+
+
+def img_save_to_path(img_path, img_inst):
+
+    cv2.imwrite(str(img_path), img_inst)
+
+    return None
 
 
 def get_timestamp():
@@ -54,6 +68,8 @@ def create_dataset_dir(output_dir):
     timestamp = get_timestamp()
     folder_split = f"{output_dir}/{timestamp}"
     Path(folder_split).mkdir()
+
+    # TODO refactor using Path.mkdir(parents=True) for multiple
 
     # Test
     Path(f"{folder_split}/test").mkdir()

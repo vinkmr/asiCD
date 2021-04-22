@@ -2,7 +2,6 @@
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
-from numpy.core.numeric import outer
 
 from asiCD import asiCD_utils
 from asiCD.model_utils import get_img_mask_generators
@@ -63,8 +62,8 @@ def mask_pre(image):
 
 
 data_gen = get_img_mask_generators(dataset_path=dataset_path,
-                                   labels_path_mod="",
-                                   aug_config=AUG_CONFIG,
+                                   ann_path="",
+                                   target_size=AUG_CONFIG,
                                    img_preprocessor=img_pre,
                                    mask_preprocessor=mask_pre)
 

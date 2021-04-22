@@ -5,9 +5,6 @@
         "prep_dataset_path":".\\dataset\\cropped\\"
     } ,
     "dataset_path": "dataset/asi",
-    "model":{
-        
-    },
     "undistort":{
         "DIM" : [1920, 1920],
         "K":    [[664.8491764615379, 0.0, 975.6988669529353],
@@ -25,5 +22,21 @@
     "thres": 180,
     "aug_config": {
         "target_size": [1920, 1920]
+    },
+    "model_config":{
+        "input_size": [128, 128],
+        "num_channels": 3,
+        "num_exp": 1,
+        "num_classes": 1,
+        "epochs": 100,
+        "lr": 0.01,
+        "batch_size": 16,
+        "steps_per_epoch": 2,
+        "val_steps": 1,
+        "train_num": 100
+    },
+    "post-process":{
+        "low_thres": 0.05,
+        "high_thres": 1.0
     }
 }
