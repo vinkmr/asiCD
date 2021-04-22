@@ -150,8 +150,20 @@ class asiParser:
 
         return files_fil_mts
 
-    def download_files(self, start_m, end_m, start_hr, end_hr, s_rate):
+    def download_files(self, start_m:int, end_m:int, start_hr:int, end_hr:int, s_rate:int):
+        """Download image files from the FTP server based on certain conditions.
+            NOTE: All-Sky Images are recorded every 20 seconds, i.e., 3 images per minute. 
 
+        Args:
+            start_m (int): Starting month of the year from which data is to be considered 
+            end_m (int): Month of the year till which data is to be considered
+            start_hr (int): Hour of the day from which data is to be considered
+            end_hr (int): Hour of the day till which data is to be considered
+            s_rate (int): Every nth(s_rate) image to be considered. Example: For s_rate = 180, every 180th image is considered. 
+
+        Returns:
+            [type]: [description]
+        """
         sampled_file_paths = self.get_filtered_files(start_m=start_m,
                                                      end_m=end_m,
                                                      start_hr=start_hr,
