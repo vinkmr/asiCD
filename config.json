@@ -4,11 +4,39 @@
         "dataset_path":".\\dataset\\actual\\",
         "prep_dataset_path":".\\dataset\\cropped\\"
     } ,
-    "dataset_path": "dataset/swimseg-2",
-    "model":{
-        
+    "dataset_path": "dataset/asi",
+    "undistort":{
+        "DIM" : [1920, 1920],
+        "K":    [[664.8491764615379, 0.0, 975.6988669529353],
+                 [0.0, 667.4263949348677, 953.5781284033219],
+                 [0.0, 0.0, 1.0]],
+        "D":    [[-0.0018048748525738535],
+                 [-0.031016463872664456],
+                 [0.025627186324899475], 
+                 [-0.007586185828154772]]
     },
+    "sun-remover":{
+        "radius": 110,
+        "low_thres":253
+    },
+    "thres": 180,
     "aug_config": {
-        "target_size": [128, 128]
+        "target_size": [1920, 1920]
+    },
+    "model_config":{
+        "input_size": [128, 128],
+        "num_channels": 3,
+        "num_exp": 1,
+        "num_classes": 1,
+        "epochs": 100,
+        "lr": 0.01,
+        "batch_size": 16,
+        "steps_per_epoch": 2,
+        "val_steps": 1,
+        "train_num": 100
+    },
+    "post-process":{
+        "low_thres": 0.05,
+        "high_thres": 1.0
     }
 }
